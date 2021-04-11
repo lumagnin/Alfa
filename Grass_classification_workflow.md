@@ -1,4 +1,20 @@
 # -Título
+`i.landsat = 1 #lo toma como códigoi
+
+```
+<style>
+    body {
+        background-color: #ABBAEA;
+    }
+    div {
+        height: 200px;
+        margin: 20px;
+        border: 5px solid;
+        background-color: #FBD603;
+    }
+</style>```
+```
+
 # -Autores
 # -Palabras claves:
 # -Introducción
@@ -37,6 +53,10 @@ algoritmos en distintas entornos y ambientes. Estos esfuerzos se deben principal
 	-Verdad de campo (Raster) conteniendo zona clasificada 
 
 # -Desarrollo
+<div id="foo"
+  class="bar">
+</div>
+
     • lineas de código utilizadas
     • imágenes antes y después cuando corresponda
     • tablas de resultados o resultados principales sacados de la estadística
