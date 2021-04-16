@@ -1,0 +1,468 @@
+﻿Title: Exploratory analysis of classification strategies for the realization of a land use and land cover map oriented to the determination of  built-up/constructed/developed[a][b][c] area.
+Authors: Celina Vionnet, Daniel Castellano,  Lucía Magnin, Mónica Pascual.
+Key words: building/construction; Landsat; GRASS GIS; pixel based classification; OBIA.
+Introduction: this article explores two strategies for the identification of pixels corresponding to built-up area in multispectral images of medium spatial resolution. Pixel-based classifiers and object-oriented satellite image analysis have been widely used and compared for the determination of urban features in medium-resolution multispectral images. As discussed in several investigations (i.e. Tadesse et al. 2012; Waqar et al. 2012), the classification of urban features presents difficulties due to the variability of the materials used, the diversity of spectral responses encountered, and the similarity of these responses to natural features such as rock outcrops and bare soil. Although there are numerous proposals as to how to address this issue/problem, the procedures are not extrapolable to other areas without a prior [d][e]evaluation of the obtained performance. This tutorial presents a workflow created to compare, with GRASS GIS, the performance of two different classification strategies[f][g] of medium resolution multispectral imagery, for the determination of built-up area within the case study (Figure 1). The classification techniques used were unsupervised pixel-based classification by classifying with four classes and subsequently reclassifying to two classes corresponding to "Built", "Unbuilt"; and supervised object-based image analysis (OBIA) through Machine Learning.
+  
+
+Figure 1. Steps followed to achieve the goals proposed in GRASS GIS.
+
+
+1 DATA PRE-PROCESSING
+Initial data / Links to the images and other resources
+        -Basin or mask corresponding to the area cuenca-lago-tif
+        -Digital elevation model (DEM) of the area DemCcaFillSink.tif
+        -Landsat image from 02_15_2020[h] LC08_L1TP_229082_20200215_20200225_01_T1.tar.gz 
+        -Ground truth (Raster) containing classified area VerdCampoEdificados2020.tif ([1])
+-Ground truth (Shape Points) containing 150 training points randomly sampled and exported as a vector[i] VCEdPoli.shp
+
+
+GRASS code
+#The first step is to create a new location based on a GeoTIFF (Cuenca-lago, with UTM20 projection) and then a mapset called “CCaSanRoque”
+grass78 -c CuencaLago.tif $HOME/grassdata/mylocation
+g.mapset -c mapset=CcaSanRoque
+grass78 $HOME/grassdata/CCaSanRoque/PERMANENT
+#Start GRASS in the created folder.
+#Given that the San Roque reservoir is eutrophicated, the area is masked in order to minimize errors due to its similarity with the vegetation.
+r.import input=$HOME/grassgis/Cuenca-Lago.tif output=cuenca
+#Import the raster of urban radii to be used as a mask for calculations, the DEM to make a correction for topography[j], the ground truth of buildings and the training points corresponding to a vector whose attributes are Built=1 and Built=0 for buildings and non-buildings, respectively.
+r.import input=$HOME/grassgis/RadiosCca.tif output=radios
+r.import input=$HOME/grassgis/DemCcaIGNFillSink.tif output=dem
+r.import input=$HOME/grassgis/VerdCampoEdificados2020.tif output=VCEd
+v.import input=$HOME/grassgis/VCEdPoli.shp output=VCEdPoli
+#To work with the Landsat 8 image, install the i.landsat toolset from g.extension and then import the 30 m resolution optical and thermal bands from the landsat scene compressed in the directory. We will  work [k]with the image of February 8, 2020.
+g.extension extension=i.landsat
+i.landsat.import -p
+        input=$HOME/grassgis/landsat_data
+        pattern=’B(1|2|3|4|5|6|7|9)’
+
+
+##Pre-processing##
+#Workspace configuration. Set working area to urban radii and projection to the basin.
+g.proj -c georef=$HOME/grassgis/CuencaSHP.shp
+g.region raster=cuenca
+#Remove clouds and invalid pixels.
+i.landsat.qa collection=1 cloud_shadow_confidence="Medium,High" cloud_confidence="Medium,High" output=ReglasNubosas.txt
+#generate reclassification rules from BQA
+r.reclass input=LC08_L1TP_229082_20200215_20200225_01_T1_BQA output=MascaraNubes rules=ReglasNubosas.txt
+#generate mask from "RegasNubosas.txt"
+r.report -e map=MascaraNubes units=p #revisar estadística (%nubosidad y sombras)
+r.mask -r
+#Eliminar cualquier máscara cargada / Remove any loaded mask / Remove any mask in use o appli[l]ed mask?
+r.mapcalc "Máscara = MascaraNubes * cuenca" 
+#Combining cloud mask with basin mask
+r.null map=Mascara setnull=0,0.0 #Force null values for "zero" pixels.[m]
+#TOA calibration, ATM and topographical correction of the landsat image
+i.landsat.toar input=LC08_L1TP_229082_20200215_20200225_01_T1_B output=LC08_L1TP_229082_20200215_20200225_01_T1_c_B \
+sensor=oli8 metfile=$HOME/grassgis/LC08_L1TP_229082_20200215_20200225_01_T1_MTL.txt  method=dos1 #TOA y ATM
+#Create a list of bands to be corrected (only 30m optica[n]l, excluding cirrus) =(B1, B2, B3, B4, B5, B6, B7).
+#Group bands for easy scene calling[o] (used with g.list to avoid writing all bands).
+Lista=`g.list rast pattern='*_B*', exclude='*_B11,*_B10,*_B8,*_B9' sep=comma`
+i.group group=L8 subgroup=L8 input=$Lista
+#Create an illumination model for topographic shading correction, obtaining position variables from the metadata file (MTL file, zenith and azimuth values "zenith angle = 90° - elevation").
+Z=37.68999506 #Z=90.0-52.31000494
+i.topo.corr -i base=dem zenith=$Z azimuth=67.86241430 output=L8.ilu
+i.topo.corr base=L8.ilu input=$Lista output=t_ zenith=$Z method=percent #correct topography
+
+
+2. DATA VISUALIZATION AND GENERATION OF DERIVED INFORMATION
+#Visualization of RGB’s before and after correction. Improvement of L8 histogram (digital numbers, ND’s).
+i.colors.enhance blue=t_LC08_L1TP_229082_20200215_20200225_01_T1_B2 \ green=t_LC08_L1TP_229082_20200215_20200225_01_T1_B3 \ red=LC08_L1TP_229082_20200215_20200225_01_T1_B4 
+d.mon output=$HOME/grassgis/rgbProc.png start=cairo #Save to file
+d.rgb blue=LC08_L1TP_229082_20200215_20200225_01_T1_B2 \ green=LC08_L1TP_229082_20200215_20200225_01_T1_B3 \
+red=LC08_L1TP_229082_20200215_20200225_01_T1_B4 
+d.mon stop=cairo 
+#Improve/enhance histogram of processed L8 image
+i.colors.enhance blue=t_.LC08_L1TP_229082_20200215_20200225_01_T1_c_B2 \ green=t_.LC08_L1TP_229082_20200215_20200225_01_T1_c_B3 \ red=t_.LC08_L1TP_229082_20200215_20200225_01_T1_c_B4
+d.mon output=$HOME/grassgis/rgbND.png start=cairo #Save to file
+d.rgb blue=t_.LC08_L1TP_229082_20200215_20200225_01_T1_c_B2 \ green=t_.LC08_L1TP_229082_20200215_20200225_01_T1_c_B3 \ red=t_.LC08_L1TP_229082_20200215_20200225_01_T1_c_B4 
+d.mon stop=cairo
+Figura 2. Image comparison before and after corre[p]ction.
+#Statistics display (o display statistics[q]) of one of the bands before and after processing
+#NDs file statistics
+r.univar  map=LC08_L1TP_229082_20200215_20200225_01_T1_B3
+
+
+<Salida>
+total null cells: 0
+total null and non-null cells: 12799108
+total null cells: 0
+
+
+Of the non-null cells:
+----------------------
+n: 12799108
+minimum: 6655
+maximum: 25050
+range: 18395
+mean: 8670.24
+mean of absolute values: 8670.24
+standard deviation: 712.924
+variance: 508261
+variation coefficient: 8.22266 %
+sum: 110971303532
+<Fin salida>
+
+
+#Statistics of atmospherically corrected data
+r.univar  map=LC08_L1TP_229082_20200215_20200225_01_T1_c_B3
+
+
+<salida>
+total null and non-null cells: 12799108
+total null cells: 0
+
+
+Of the non-null cells:
+----------------------
+n: 12799108
+minimum: 0
+maximum: 0.442639
+range: 0.442639
+mean: 0.0287039
+mean of absolute values: 0.0287039
+standard deviation: 0.0179357
+variance: 0.000321688
+variation coefficient: 62.4851 %
+sum: 367384.31205917
+<Fin salida>
+
+
+#Data corrected for atmosphere and topography[r]
+r.univar  map=t_.LC08_L1TP_229082_20200215_20200225_01_T1_c_B3
+
+
+<Salida>
+total null and non-null cells: 12799108
+total null cells: 20308
+
+
+Of the non-null cells:
+----------------------
+n: 12778800
+minimum: -19.1121
+maximum: 26.2262
+range: 45.3382
+mean: 0.029131
+mean of absolute values: 0.0291804
+standard deviation: 0.0311191
+variance: 0.0009684
+variation coefficient: 106.825 %
+sum: 372258.951873465
+<Fin salida>
+
+
+##Generate features or additional characteristics derived from spectral information.
+#Fill in null values in all bands (cycle for C syntax only works on linux).
+for (( i=1; i<=7; i++ )); do r.fillnulls input=t_.LC08_L1TP_229082_20200215_20200225_01_T1_c_B$i output=L8_ctf$i;done
+r.mask -r #Delete mask
+i.colors.enhance blue=L8_ctf2 green=L8_ctf3 red=L8_ctf4
+#Display the file obtained after removing null values.
+d.mon wx0
+d.rgb blue=L8_ctf2 green=L8_ctf3 red=L8_ctf4
+r.mask raster=Mascara #Reestablish mask
+#Generate panchromatic band and texture IDM and ASM data.
+r.texture sobre banda (B1+B2+B3+B4)/4 
+r.mapcalc "Pancro=(L8_ctf1+L8_ctf2+L8_ctf3+L8_ctf4)/4" 
+r.colors map=Pancro -e color=grey #Color table application for panchromatic band visualization.
+r.texture input=Pancro output=Texturas size=5 distance=1 method=idm,asm #salida Texturas_ASM Texturas_IDM #[s]texture calculation IDM=1/entropy, ASM=1/contrast
+#Generate spectral indexes: NDBI (normalized difference built up index) and SAVI (soil adjusted vegetation index) with  r.mapcalc y i.vi.
+r.mapcalc "L8_NDBI=(L8_ctf5-L8_ctf4)/(L8_ctf5+L8_ctf4)" #NDBI  = (OLI6 – OLI5) / (OLI6 + OLI5) 
+#Generate statistics from L8_NDBI
+r.univar map=L8_NDBI
+
+
+<Salida>
+r.univar map=L8_NDBI
+ 100%
+total null and non-null cells: 3235262        *Posee valores fuera del rango
+total null cells: 1454587                        *de -1 a 1 e interfiere con 
+                                                *visualización
+Of the non-null cells:
+----------------------
+n: 1780675
+minimum: -377.64
+maximum: 3240.39
+range: 3618.03
+mean: 0.838439
+mean of absolute values: 0.845448
+standard deviation: 2.69858
+variance: 7.28232
+variation coefficient: 321.857 %
+sum: 1492986.69859476
+-------------------------------------------------------------------------------
+<fin Salida>
+#Filter out values greater than and less than 1 (generated by overcorrection of the algorithms and which should not be there by NDBI definition...but there they are).
+r.mapcalc "L8_NDBIc=if(L8_NDBI>1,null(),L8_NDBI)" --overwrite
+r.mapcalc "L8_NDBIc=if(L8_NDBI<-1,null(),L8_NDBIc)" --overwrite
+#Symbolize map with byr[t] color chart, add legend and display.
+r.colors map=L8_NDBIc -e color=byr
+d.mon wx0
+d.legend raster=L8_NDBIc -t label_step=1
+d.rast map=L8_NDBIc
+#SAVI=soil adjusted vegetation index.
+i.vi red=L8_ctf4 nir=L8_ctf5 viname=savi output=L8_SAVI 
+#Filter values greater and less than 1.
+r.mapcalc "L8_SAVIc=if(L8_SAVI>1,null(),L8_SAVI)" --overwrite
+r.mapcalc "L8_SAVIc=if(L8_SAVI<-1,null(),L8_SAVIc)" --overwrit
+#Grouping of work images
+g.remove name=L8o type=group
+ListaClasif=`g.list rast pattern='L8_ctf*,*SAVIc*,*NDBIc*,Texturas_ASM,Texturas_IDM' sep=comma`
+ListaClasif=`g.list rast pattern='L8_ctf*,*SAVIc*,*NDBIc*' sep=comma`
+i.group group=L8o subgroup=L8o input=$ListaClasif 
+
+
+3-4 CLASSIFICATION AND VISUALIZATION OF RESULTS
+#Apply mask
+r.mask raster=Mascara
+#Perform/carry out an unsupervised pixel-based classification using 4 classes (possibly representing: BareSoil, SparseVegetation, DenseVegetation, Built-up).
+#Classify using 4 classes and then reclassify to 2 classes. This design was chosen arbitrarily and for exploratory purposes. Some tests carried out showed that, having a certain knowledge of the study area, better results are obtained working with 16 classes, reclassified to two (12 classes are used as unbuilt and 4 as built, reaching 87% of PG). 
+#Generate signatures.
+i.cluster group=L8o subgroup=L8o sig=L8_4clusters classes=4 separation=0.6 --overwrite
+#Classify.
+i.maxlik group=L8o subgroup=L8o sig=L8_4clusters output=Class_L8_4clusters rej=Rechazo_L8_4Clusters --overwrite
+#Get file information.
+r.info map=Class_L8_4clusters
+#Reclassify classes 1,2,3->0 and 4->1 (0=no ed, 1=ed).
+r.reclass input=Class_L8_4clusters output=Class_L8_4clusters_recl rules=$HOME/grassgis/reclass4clases --overwrite
+r.category Class_L8_4clusters_recl
+r.colors map=Class_L8_4clusters_recl rules=$HOME/grassgis/PaletaUrbanaRASTER[u]
+#END
+
+
+#Perform unsupervised object-based classification (using 2 classes)
+#Classify with USPO tool and Superpixels
+#Load libraries for OrOb classification
+g.extension i.superpixels.slic
+g.extension r.neighborhoodmatrix
+g.extension i.segment.uspo
+g.extension i.segment.stats
+g.extension r.object.geometry
+g.extension r.sample.category
+g.extension v.class.mlR
+g.extension d.colors
+
+
+<Salida>
+#No textures or panchromatic (only used to generate textures)!
+...it generates a series of segmentation files [v]
+..."segs_regionOBIA_rank1"..5
+Working on region regionOBIA
+Best values:
+Region Thresh Minsize Optimization
+regionOBIA 0.015 3 1.1359822904731627
+regionOBIA 0.02 3 1.1155816358538346
+regionOBIA 0.01 3 1.1048201536527993
+regionOBIA 0.03 3 1.0914507432183962
+regionOBIA 0.025 3 1.0872001515196168
+With textures![w]
+Working on region regionOBIA
+Best values:
+Region Thresh Minsize Optimization
+regionOBIA 0.035 3 1.1038004912818349
+regionOBIA 0.04 3 1.1004668755212106
+regionOBIA 0.03 3 1.0931050399053506
+regionOBIA 0.025 3 1.0833664985648512
+regionOBIA 0.045 3 1.0820529602438915
+<Fin Salida>
+
+
+#Convert rank1 to vector for display.
+r.to.vect -tv input=segs_regionOBIA_rank1 output=segs_rank1 type=area
+#Generate statistics for segments
+i.segment.stats map=segs_regionOBIA_rank1 rasters=$ListaOBIA raster_statistics=mean,stddev \
+area_measures=area,perimeter,compact_circle,compact_square vectormap=segs_stats processes=4
+
+
+<Salida>
+capa vectorial = "seg_stats"[x]
+Click on data on seg_stats and then on attribute table (show attributes of the vector map in the gui) to view values.
+<Fin Salida>
+
+
+#Generate ground truth for supervised classification.
+#Use a classified and validated raster with accuracy greater than 90% =VCEd, L8 with values 1 = built and the rest = 0.
+#Use vector file VCEdPoli as training data (150 points randomly generated from VCEd raster).
+v.info VCEdPoli 
+#See number of points per class.
+db.select sql="SELECT Edificado,COUNT(cat) as count_class FROM VCEdPoli GROUP BY Edificado"
+<Salida>
+Edificado|count_class
+0|50
+1|100
+<Fin Salida>
+
+
+#Select segments that coincide with checkpoints.
+v.select ainput=segs_stats binput=VCEdPoli output=train_segments operator=overlap
+v.info train_segments
+#Add column to train[y]ing segments. 
+v.db.addcolumn train_segments column="class"
+#Assign labels from points to segments.
+v.distance from=train_segments to=VCEdPoli upload=to_attr column=class to_column=Edificado
+#Select groups of training segments per class.
+db.select sql="SELECT class,COUNT(cat) as count_class FROM train_segments GROUP BY class"
+#Assigning colors to the training vector file.
+v.colors map=train_segments rules=$HOME/grassgis/PaletaUrbana column=class 
+#Classification with Machine Learning.
+v.class.mlR -nf \
+  segments_map=segs_stats \
+  training_map=train_segments \
+  train_class_column=class \
+  output_class_column=class_rf \
+  classified_map=classification \
+  raster_segments_map=segs_obia_subset_rank1 \
+  classifier=rf \
+  folds=5 partitions=10 tunelength=10 \
+  weighting_modes=smv \
+  weighting_metric=accuracy \
+  output_model_file=model \
+  variable_importance_file=var_imp.txt \
+  accuracy_file=accuracy.csv \
+  classification_results=all_results.csv \
+  model_details=classifier_runs.txt \
+  r_script_file=Rscript_mlR.R \
+  processes=4
+#Assigning colors to the OBIA classification output raster.
+r.colors map=classification_rf rules=$HOME/grassgis/PaletaUrbanaOBIA[z]
+#END
+
+
+5 VALIDATION / ASSESSMENT OF RESULTS
+#Validation process.
+#Validation pixel-oriented classification with 4 initial classes reclassified to 2.
+r.kappa classification=Class_L8_4clusters_recl reference=VCEd
+
+
+<Salida>
+                        ACCURACY ASSESSMENT
+LOCATION: CCaSanRoque                                Mon Apr  5 19:56:04 2021
+MASK: Mascara in PERMANENT, categories 1
+MAPS: MAP1 = (untitled) (VCEd in PERMANENT)
+              MAP2 = Reclass of Class_L8_4clusters in PERMANENT (Class_L8_4clusters_recl in PERMANENT)
+
+
+Error Matrix
+Panel #1 of 1
+                          MAP1
+     cat#        0        1        Row Sum
+ M     0        1466301        193969        1660270
+ A     1        73994        46345        120339
+Col Sum                1540295        240314        1780609
+
+
+Cats        % Commission        % Ommission        Estimated Kappa
+0        11.682979        4.803885        0.134348
+1        61.487963        80.714815        0.289188 
+
+
+Kappa                Kappa Variance
+0.183465        0.000001
+
+
+Obs Correct                Total Obs        % Observed Correct
+1512646                1780609                84.951048
+
+
+MAP1 Category Description
+0:  (no description)
+1:  (no description)
+
+
+MAP2 Category Description
+0:  No edificado
+1:  Edificado
+<Fin Salida>
+
+
+#OBIA validation (Machine Learning)
+r.kappa classification=classification_rf reference=VCEd
+<Salida>
+                        ACCURACY ASSESSMENT
+LOCATION: CCaSanRoque                                Mon Apr  5 19:04:45 2021
+MASK: Mascara in PERMANENT, categories 1
+MAPS: MAP1 = (untitled) (VCEd in PERMANENT)
+      MAP2 = Reclass of segs_regionOBIA_rank1 in PERMANENT (classification_rf in PERMANENT)
+
+
+Error Matrix
+Panel #1 of 1
+                          MAP1
+     cat#        0                1                Row Sum
+ M     0        1301259         316700                1617959
+ A     1        11290                99515                110805
+Col Sum        1312549         416215                1728764
+
+
+Cats        % Commission        % Ommission        Estimated Kappa
+0        19.574044        0.860158        0.186985
+1        10.189071        76.090482        0.865799
+
+
+Kappa                Kappa Variance
+0.307549        0.000001
+
+
+Obs Correct                Total Obs        % Observed Correct
+1400774                1728764                81.027486
+
+
+MAP1 Category Description
+0:  (no description)
+1:  (no description)
+
+
+MAP2 Category Description
+0:  No edificado
+1:  Edificado
+<Fin Salida>
+
+
+Conclusions: the results of the classification accuracy evaluation obtained through the kappa index (% hit rate penalized by random hits) and overall hit rate value (PG = observed correct) indicate that both strategies have similar performance, or at least we cannot state that either of them is clearly superior to the other under these test conditions. Although in the cases tested the pixel based classification obtained better results (supervised PG: 85% vs 81% for OBIA-ML classification), different classification conditions (ie. number of initial minor classes, number of derived bands analyzed) may alter the results in one direction or the other. 
+As a result of the accuracy evaluation, the kappa number (% hit penalized by random hits) and percentage hit value (observed correct) indicate that the unsupervised classification using 4 classes reclassified into 2 classes is more efficient (85% of the observed values correct) than the OBIA (ML) classification into 2 classes (81%).
+The lower performance of the OBIA classification may be due to the spatial resolution of Landsat images (30 m), which prevents[aa] making use of[ab] the greater advantages of OBIA (greater precision in the definition of buildings, in this case) (Blaschke 2010).
+As a conclusion/to conclude, a greater number/wider range of configurations in the classification strategies should be explored, such as using higher spatial resolution data, using spectral indexes that improve the discrimination of classes with lower spectral separability such as rock and urban areas, e. g., incorporating the indexes proposed by Waqar et al. (2012), which in this first approximation were not used, and using a greater number of initial classes in the unsupervised classification.
+
+
+References
+Blaschke 2010. Object Based Image Analysis for Remote Sensing. ISPRS Journal of Photogrammetry and Remote Sensing 65:2-16.
+Castellano, D. 2021. Análisis del desarrollo urbano y cambios del uso de suelo en la cuenca del embalse San Roque mediante técnicas de teledetección y su relación con aspectos geológicos-geomorfológicos. Presentado ante la Facultad de Matemática, Astronomía, Física y Computación  y el Instituto de Altos Estudios Espaciales Mario Gulich  como parte de los requerimientos para la obtención del grado de Magister en aplicaciones de Información Espacial. universidad Nacional de Córdoba, Ms.
+Chavez, Jr, P. 1988. An improved dark-object subtraction technique for atmospheric scattering correction of multispectral data, Remote Sensing of Environment, vol. 24, pp. 459–479, 04.
+Felicisimo, A. 1994.  Modelos Digitales del Terreno. Introducción y Aplicaciones en las Ciencias Ambientales. Pentalfa.
+Henrich, V. 2012. Index DataBase. https://www.indexdatabase.de.
+Chander, G. y B. Markham, 2009. Summary of current radiometric calibration coefficients for landsat mss, tm, etm+, and eo-1 ali sensors, Remote Sensing of Environment, vol. 113, pp. 893– 903, 05.
+Mas, J. Dı́az-Gallegos, J. y A. Vega. 2003. Evaluación de la confiabilidad temática de mapas o de imágenes clasificadas: una revisión, Investigaciones geográficas, pp. 53–72, 08.
+Riaño, D., Chuvieco, E., Salas,  J. e I. Aguado. 2003. Assessment of different topographic corrections in landsat-tm data for mapping vegetation types (2003), Geoscience and Remote Sensing, IEEE Transactions on, vol. 41, pp. 1056 – 1061, 06.
+Tadesse, W., Coleman, T. y T. Tsegaye. 2011. Improvement of land use and land cover classification of an urban area using image segmentation from landsat etm + data, 10.
+Waqar, Mirza & Mirza, J.F. & Mumtaz, R. & Hussain, Ejaz. (2012). Development of new indices for extraction of built-up area and bare soil from landsat. Data. 1. http://dx.doi.org/10.4172/scientificreports.136.
+
+
+________________
+[1] Para generar este mapa de verdad de campo se clasificó una imágen de febrero de 2019 y se muestrearon 100 puntos al azar de clase edificado y 100 puntos de clase no urbano. Se verificaron punto por punto exportándolos a Google Earth, contra imágenes de alta resolución brindadas por la plataforma para esa fecha. Se midió la overal accuracy (PG) como porcentaje haciendo PG=100*TotalCorrecto/200. Se tomaron como correctos aquellos clasificados como edificados si en un radio de 15m o menor había una edificación o camino y viceversa (Castellano 2021 Ms).
+[a]developed sería desarrollada como sinónimo de urbanización, pero no creo que sea la más apropiada. Las otras dos opciones tampoco me terminan de convencer
+[b]urban area sería, me parece
+[c]Creo que Daniel había dicho que era mejor no usar urbano porque ese término era más abarcativo que edificaciones. Por ejemplo, una plaza puede ser una urbanización, y a eso no lo detectaría este método. O al menos eso recuerdo
+[d]la evaluación debería ser previa o posterior a la extrapolación del método? Pregunto porque no estaba especificado
+[e]No entiendo la pregunta...Perdón que es extrapolación del método?
+[f]no estoy segura de cómo traducir "clasificación temática", no sé bien a qué se refiere y si "themed classification" sería correcto
+[g]it is said Temmatic classification, some times temmatic mapping.
+[h]invertí el día y el mes porque a los anglosajones les encanta complicarnos la existencia al resto del mundo
+[i]Corroborar que no le haya cambiado el sentido a la oración
+[j]Debe estar mal, no conozco el término en inglés. Corroborar
+[k]Será muy informal ponerlo así?
+[l]Lo dejo a su criterio
+[m]No entiendo si esto es una aclaración o a dónde va
+[n]optical solo y optical bands?
+[o]"llamado de la escena" no sé si esta traducción es correcta
+[p]Insertar figuras
+[q]Dependiendo del sentido de la oración. No entiendo así que no sé cual corresponde
+[r]Esto era "datos corregidos ATM y topo". Confirmar si está bien
+[s]El orden de todo esto está bien o hay líneas que deberían ir separadas?
+[t]byr?
+[u]Acá Lucía había argegado: FIGURA 3A) clasificacion no supervisada basada en pixeles
+[v]?
+[w]?
+[x]esto debería ir traducido también?
+[y]train o training?
+[z]Lucía agregó: Figura 3B salida de clasificacion OBIA ML
+[aa]o tal vez poner "may prevent/impede" si es que no estamos seguros. Digo, como para atajarnos
+[ab]Para no poner "taking advantage of"
