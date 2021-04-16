@@ -11,11 +11,13 @@ This article explores two strategies for the identification of pixels correspond
 
 ![Figure 1. Steps followed to achieve the goals proposed in GRASS GIS.](https://github.com/dcstlln/Alfa/blob/RGrass/WorkFlow.jpg)
 
-### 1. Data input (ingredients)
-1 DATA PRE-PROCESSING
-Initial data / Links to the images and other resources
-    -Basin or mask corresponding to the area cuenca-lago-tif
-    -Digital elevation model (DEM) of the area DemCcaFillSink.tif
-    -Landsat image from 02_15_2020 LC08_L1TP_229082_20200215_20200225_01_T1.tar.gz 
-    -Ground truth (Raster) containing classified area VerdCampoEdificados2020.tif ()
--Ground truth (Shape Points) containing 150 training points randomly sampled and exported as a vector VCEdPoli.shp
+### 1. Input data (ingredients)
+The data used for this analysis were:
+
+|description | code name|preview|
+|---------------------------------------------------|----------------------------|-------------------------|
+|Basin or mask corresponding to the area |cuenca-lago-tif| |
+|Digital elevation model (DEM) of the area |DemCcaFillSink.tif| |
+|Landsat image from 02_15_2020 |LC08_L1TP_229082_20200215_20200225_01_T1.tar.gz | |
+|Ground truth (Raster) containing classified area |VerdCampoEdificados2020.tif|
+|Ground truth (Shape Points) containing 150 training points randomly sampled and exported as a vector |VCEdPoli.shp| |
