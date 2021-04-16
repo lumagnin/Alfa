@@ -21,3 +21,14 @@ The data used for this analysis were:
 |Landsat image from 02_15_2020 |LC08_L1TP_229082_20200215_20200225_01_T1.tar.gz | |
 |Ground truth (Raster) containing classified area |VerdCampoEdificados2020.tif|
 |Ground truth (Shape Points) containing 150 training points randomly sampled and exported as a vector |VCEdPoli.shp| |
+
+### 2. Enviroment settings
+```
+grass78 -c CuencaLago.tif $HOME/grassdata/mylocation
+
+g.mapset -c mapset=CcaSanRoque
+
+grass78 $HOME/grassdata/CCaSanRoque/PERMANENT 
+```
+### 3. Start GRASS in the created folder 
+### 4. 
