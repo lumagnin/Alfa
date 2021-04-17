@@ -71,7 +71,9 @@ Moving from digital numbers to surface reflectance and brightness temperature
 i.landsat.toar input=LC08_L1TP_229082_20200215_20200225_01_T1_B output=LC08_L1TP_229082_20200215_20200225_01_T1_c_B \
 sensor=oli8 metfile=$HOME/grassgis/LC08_L1TP_229082_20200215_20200225_01_T1_MTL.txt  method=dos1
 ```
-correcting topographic shading (only 30m optical, excluding cirrus)
+-->it generate a number of useful maps named: _LC08_L1TP_229082_20200215_20200225_01_T1_c_B[N], where [N] is 1|2|3|4|5|6|7|9.
+
+Correcting topographic shading (only 30m optical, excluding cirrus)
 Obtain position solar variables from the metadata file (MTL file, zenith and azimuth values "zenith angle = 90° - elevation").
 Z=37.68999506 #Z=90.0-52.31000494
 ```
@@ -82,16 +84,172 @@ A=67.86241430
 i.topo.corr -i base=dem zenith=$Z azimuth=$A output=L8.ilu
 i.topo.corr base=L8.ilu input=$Lista output=t_ zenith=$Z method=percent #correct topography
 ```
+-->it generate a number of useful maps named: t_LC08_L1TP_229082_20200215_20200225_01_T1_c_B[N], where [N] is 1|2|3|4|5|6|7|9.
 
 ### 7. Generation of features and additional characteristics derived from Landsat spectral information.
 Fill in null values in all bands _(cycle for C syntax only works on Linux investigte sintax for Windows)_.
 ```
 for (( i=1; i<=7; i++ )); do r.fillnulls input=t_.LC08_L1TP_229082_20200215_20200225_01_T1_c_B$i output=L8_ctf$i;done
 ```
+-->it generate a number of useful maps named: L8_ctf[N], where [N] is 1|2|3|4|5|6|7|9
+
+Generating panchromatic band and compute textures by IDM (1/enthropy) and ASM (1/contrast) methods.
+```
+r.mapcalc "Pancro=(L8_ctf1+L8_ctf2+L8_ctf3+L8_ctf4)/4" 
+r.colors map=Pancro -e color=grey #Color table application for panchromatic band visualization.
+r.texture input=Pancro output=Texturas size=5 distance=1 method=idm,asm  
+```
+-->it generate three useful maps: _Pancro, Texturas_ASM, Texturas_IDM_
+
+Generating spectral indexes: NDBI (normalized difference built up index) and SAVI (soil adjusted vegetation index) with  r.mapcalc y i.vi.
+Reclassify odd values above 1 and below -1.
+```
+r.mapcalc "L8_NDBI=(L8_ctf5-L8_ctf4)/(L8_ctf5+L8_ctf4)" #NDBI  = (OLI6 – OLI5) / (OLI6 + OLI5)
+i.vi red=L8_ctf4 nir=L8_ctf5 viname=savi output=L8_SAVI 
+r.mapcalc "L8_NDBIc=if(L8_NDBI>1,null(),L8_NDBI)" --overwrite
+r.mapcalc "L8_NDBIc=if(L8_NDBI<-1,null(),L8_NDBIc)" --overwrite
+r.mapcalc "L8_SAVIc=if(L8_SAVI>1,null(),L8_SAVI)" --overwrite
+r.mapcalc "L8_SAVIc=if(L8_SAVI<-1,null(),L8_SAVIc)" --overwrite
+```
+-->it generate useful two maps: _L8\_NDVIc, L8\_SAVIc_
+
+### 8. Classification and visualization of results
+#### Conducting an unsupervised pixel-based classification using 4 initial classes (possibly representing: BareSoil, SparseVegetation, DenseVegetation, Built-up).
+Grouping the working data.
+```
+ListaClasif=`g.list rast pattern='L8_ctf*,*SAVIc*,*NDBIc*' sep=comma`
+i.group group=L8o subgroup=L8o input=$ListaClasif 
+```
+Generating spectral signatures for classifier, classifying and reclassifying classes 1,2,3->0 and 4->1 (0=no eddificated, 1=eddificated), based on knowledge of the study area 
+```
+i.cluster group=L8o subgroup=L8o sig=L8_4clusters classes=4 separation=0.6 --overwrite
+i.maxlik group=L8o subgroup=L8o sig=L8_4clusters output=Class_L8_4clusters rej=Rechazo_L8_4Clusters --overwrite
+r.reclass input=Class_L8_4clusters output=Class_L8_4clusters_recl rules=$HOME/grassgis/reclass4clases --overwrite
+r.category Class_L8_4clusters_recl
+r.colors map=Class_L8_4clusters_recl rules=$HOME/grassgis/PaletaUrbanaRASTER
+```
+_You can Get file/classification information typing:_ *r.info map=Class\_L8\_4clusters* and *r.category Class_L8_4clusters_recl*
+# insertar link a $HOME/grassgis/PaletaUrbanaRASTER
+
+#### Perform unsupervised object-based classification (using 2 classes)
+Generating region for algorithms and seeds for speed up classification process. Determining optimal classification parameters with USPO.
+```
+g.region -p save=regionOBIA
+i.superpixels.slic input=L8o output=L8sp step=2 compactness=0.7 memory=2000
+i.segment.uspo group=L8o output=L8_uspo.csv seeds=L8sp segment_map=segs region=regionOBIA \
+threshold_start=0.005 threshold_stop=0.05 threshold_step=0.005 minsizes=3 number_best=5 memory=2000 processes=4 
+```
+--> The output contains the information structured like this:
+|Region |Thresh |Minsize |Optimization|
+|---------|------|---|----------------|
+|regionOBIA |0.015 |3 |1.1359822904731627|
+|...|...|...|...|
+|regionOBIA |0.025 |3 |1.0872001515196168|
+
+each line its an ranked parameter and can be used calling "segs_regionOBIA_rank1","segs_regionOBIA_rank2",..
+
+Converting rank1 to vector for visualization and making stistics for segments
+```
+r.to.vect -tv input=segs_regionOBIA_rank1 output=segs_rank1 type=area
+i.segment.stats map=segs_regionOBIA_rank1 rasters=$ListaOBIA raster_statistics=mean,stddev \
+area_measures=area,perimeter,compact_circle,compact_square vectormap=segs_stats processes=4
+```
+Selection of segment points for training from segmentation and field truth. Making spatial database.
+```
+v.select ainput=segs_stats binput=VCEdPoli output=train_segments operator=overlap
+v.info train_segments
+v.db.addcolumn train_segments column="class"
+v.distance from=train_segments to=VCEdPoli upload=to_attr column=class to_column=Edificado
+db.select sql="SELECT class,COUNT(cat) as count_class FROM train_segments GROUP BY class"
+```
+_The color pallette can by set for the training vector using_ *v.colors map=train_segments rules=$HOME/grassgis/PaletaUrbana column=class*
+
+Classification with machine learning (a long single line statement to call the classifier algorithm)
+```
+v.class.mlR -nf \
+  segments_map=segs_stats \
+  training_map=train_segments \
+  train_class_column=class \
+  output_class_column=class_rf \
+  classified_map=classification \
+  raster_segments_map=segs_obia_subset_rank1 \
+  classifier=rf \
+  folds=5 partitions=10 tunelength=10 \
+  weighting_modes=smv \
+  weighting_metric=accuracy \
+  output_model_file=model \
+  variable_importance_file=var_imp.txt \
+```
 
 
+### 9. VALIDATION / ASSESSMENT OF RESULTS
+kappa and overall accuracy for pixel-oriented classification with 4 initial classes reclassified to 2, and OBIA validation (Machine Learning).
+
 ```
+r.kappa classification=Class_L8_4clusters_recl reference=VCEd
+r.kappa classification=classification_rf reference=VCEd
+
 ```
+The results of both tests are shown in the following figure
+#insertar figura con resultados
+
+
+### 10. Observations
+
+- The first observation is that the OBIA classification procedure involves a greater number of steps and is generally more complicated compared to the unsupervised classification.
+- Second: the results of the classification accuracy evaluation obtained through the kappa index (% hit rate penalized by random hits) and overall hit rate value (PG = observed correct) indicate that both strategies have similar performance, or at least we cannot state that either of them is clearly superior to the other under these test conditions. Although in the cases tested the pixel based classification obtained better results (supervised PG: 85% vs 81% for OBIA-ML classification), different classification conditions (ie. number of initial minor classes, number of derived bands analyzed) may alter the results in one direction or the other. 
+As a result of the accuracy evaluation, the kappa number (% hit penalized by random hits) and percentage hit value (observed correct) indicate that the unsupervised classification using 4 classes reclassified into 2 classes is more efficient (85% of the observed values correct) than the OBIA (ML) classification into 2 classes (81%).
+The lower performance of the OBIA classification may be due to the spatial resolution of Landsat images (30 m), which prevents making use of the greater advantages of OBIA (greater precision in the definition of buildings, in this case) (Blaschke 2010).
+As a conclusion/to conclude, a greater number/wider range of configurations in the classification strategies should be explored, such as using higher spatial resolution data, using spectral indexes that improve the discrimination of classes with lower spectral separability such as rock and urban areas, e. g., incorporating the indexes proposed by Waqar et al. (2012), which in this first approximation were not used, and using a greater number of initial classes in the unsupervised classification.
+ 
+
+### 11. Bibliografy
+- Blaschke 2010. Object Based Image Analysis for Remote Sensing. ISPRS Journal of Photogrammetry and Remote Sensing 65:2-16.
+- Castellano, D. 2021. Análisis del desarrollo urbano y cambios del uso de suelo en la cuenca del embalse San Roque mediante técnicas de teledetección y su relación con aspectos geológicos-geomorfológicos. Presentado ante la Facultad de Matemática, Astronomía, Física y Computación  y el Instituto de Altos Estudios Espaciales Mario Gulich  como parte de los requerimientos para la obtención del grado de Magister en aplicaciones de Información Espacial. universidad Nacional de Córdoba, Ms.
+- Chavez, Jr, P. 1988. An improved dark-object subtraction technique for atmospheric scattering correction of multispectral data, Remote Sensing of Environment, vol. 24, pp. 459–479, 04.
+- Felicisimo, A. 1994.  Modelos Digitales del Terreno. Introducción y Aplicaciones en las Ciencias Ambientales. Pentalfa.
+- Henrich, V. 2012. Index DataBase. https://www.indexdatabase.de.
+- Chander, G. y B. Markham, 2009. Summary of current radiometric calibration coefficients for landsat mss, tm, etm+, and eo-1 ali sensors, Remote Sensing of Environment, vol. 113, pp. 893– 903, 05.
+- Mas, J. Dı́az-Gallegos, J. y A. Vega. 2003. Evaluación de la confiabilidad temática de mapas o de imágenes clasificadas: una revisión, Investigaciones geográficas, pp. 53–72, 08.
+- Riaño, D., Chuvieco, E., Salas,  J. e I. Aguado. 2003. Assessment of different topographic corrections in landsat-tm data for mapping vegetation types (2003), Geoscience and Remote Sensing, IEEE Transactions on, vol. 41, pp. 1056 – 1061, 06.
+- Tadesse, W., Coleman, T. y T. Tsegaye. 2011. Improvement of land use and land cover classification of an urban area using image segmentation from landsat etm + data, 10.
+- Waqar, Mirza & Mirza, J.F. & Mumtaz, R. & Hussain, Ejaz. (2012). Development of new indices for extraction of built-up area and bare soil from landsat. Data. 1. http://dx.doi.org/10.4172/scientificreports.136.
+
+### 12. Grass reference pages
+- https://grass.osgeo.org/grass76/manuals/d.mon.html
+- https://grass.osgeo.org/grass76/manuals/g.list.html
+- https://grass.osgeo.org/grass76/manuals/g.remove.html
+- https://grass.osgeo.org/grass76/manuals/v.import.html
+- https://grass.osgeo.org/grass78/manuals/addons/i.landsat.import.html
+- https://grass.osgeo.org/grass78/manuals/addons/i.landsat.qa.html
+- https://grass.osgeo.org/grass78/manuals/addons/r.sample.category.html 
+- https://grass.osgeo.org/grass78/manuals/d.rast.html
+- https://grass.osgeo.org/grass78/manuals/g.extension.html
+- https://grass.osgeo.org/grass78/manuals/g.region.html
+- https://grass.osgeo.org/grass78/manuals/i.cluster.html 
+- https://grass.osgeo.org/grass78/manuals/i.group.html
+- https://grass.osgeo.org/grass78/manuals/i.topo.corr.html
+- https://grass.osgeo.org/grass78/manuals/i.vi.html 
+- https://grass.osgeo.org/grass78/manuals/r.buffer.html 
+- https://grass.osgeo.org/grass78/manuals/r.colors.html
+- https://grass.osgeo.org/grass78/manuals/r.import.html
+- https://grass.osgeo.org/grass78/manuals/r.null.html
+- https://grass.osgeo.org/grass78/manuals/r.texture.html 
+- https://grass.osgeo.org/grass78/manuals/v.colors.html
+- https://grass.osgeo.org/grass79/manuals/d.legend.html
+- https://grass.osgeo.org/grass79/manuals/g.list.html
+- https://grass.osgeo.org/grass79/manuals/g.proj.html
+- https://grass.osgeo.org/grass79/manuals/i.colors.enhance.html
+- https://grass.osgeo.org/grass79/manuals/i.landsat.toar.html
+- https://grass.osgeo.org/grass79/manuals/r.fillnulls.html 
+- https://grass.osgeo.org/grass79/manuals/r.info.html
+- https://grass.osgeo.org/grass79/manuals/r.kappa.html 
+- https://grass.osgeo.org/grass79/manuals/r.mapcalc.html
+- https://grass.osgeo.org/grass79/manuals/r.mask.html
+- https://grass.osgeo.org/grass79/manuals/r.reclass.html
+- https://grass.osgeo.org/grass79/manuals/r.report.html
+- https://grass.osgeo.org/grass79/manuals/r.univar.html
+- https://grass.osgeo.org/grass79/manuals/v.distance.html 
 
 
 ```
