@@ -15,11 +15,11 @@ The data used for this analysis were:
 
 |description | filename|preview|
 |---------------------------------------------------|----------------------------|-------------------------|
-|Basin or mask corresponding to the area (0-1 raster data) |cuenca-lago.tif|  [enlace](https://github.com/dcstlln/Alfa/blob/RGrass/Cuenca-Lago.jpg)|
-|Digital elevation model (DEM-raster data) of the area |DemCcaFillSink.tif| [enlace](https://github.com/dcstlln/Alfa/blob/RGrass/DemCCa.jpg)|
-|Landsat image from 02_15_2020 |LC08_L1TP_229082_20200215_20200225_01_T1.tar.gz | [enlace](https://github.com/dcstlln/Alfa/blob/RGrass/L8.jpg)|
-|Ground truth (Raster data) containing classified area |VerdCampoEdificados2020.tif|[enlace](https://github.com/dcstlln/Alfa/blob/RGrass/VerdDeCampo.jpg)|
-|Ground truth (Points shape type data) containing 150 training points randomly sampled and exported as a vector |VCEdPoli.shp|[enlace]() |
+|Basin or mask corresponding to the area (0-1 raster data) |cuenca-lago.tif|  [see it](https://github.com/dcstlln/Alfa/blob/RGrass/Cuenca-Lago.jpg)|
+|Digital elevation model (DEM-raster data) of the area |DemCcaFillSink.tif| [see it](https://github.com/dcstlln/Alfa/blob/RGrass/DemCCa.jpg)|
+|Landsat image from 02_15_2020 |LC08_L1TP_229082_20200215_20200225_01_T1.tar.gz | [see it](https://github.com/dcstlln/Alfa/blob/RGrass/L8.jpg)|
+|Ground truth (Raster data) containing classified area |VerdCampoEdificados2020.tif|[see it](https://github.com/dcstlln/Alfa/blob/RGrass/VerdDeCampo.jpg)|
+|Ground truth (Points shape type data) containing 150 training points randomly sampled and exported as a vector |VCEdPoli.shp|[see it]() |
 
 ### 2. Configuring working directories and starting Grass
 ```
@@ -86,8 +86,9 @@ i.topo.corr base=L8.ilu input=$Lista output=t_ zenith=$Z method=percent #correct
 -->it generate a number of useful maps named: t_LC08_L1TP_229082_20200215_20200225_01_T1_c_B[N], where [N] is 1|2|3|4|5|6|7|9.
 A comparison betwing RGB composition of the image in digital numbers and surface reflectance topo-corrected can be seen here:
 
-|[Original](https://github.com/dcstlln/Alfa/blob/RGrass/NDs)|[Corrected](https://github.com/dcstlln/Alfa/blob/RGrass/RGBCalTPG.jpg)|
+|Original|Corrected|
 |-------------------|------------------|
+[[see it](https://github.com/dcstlln/Alfa/blob/RGrass/NDs)|[see it](https://github.com/dcstlln/Alfa/blob/RGrass/RGBCalTPG.jpg)|
 
 
 ### 7. Generation of features and additional characteristics derived from Landsat spectral information.
