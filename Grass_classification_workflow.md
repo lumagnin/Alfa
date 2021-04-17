@@ -188,7 +188,6 @@ kappa and overall accuracy for pixel-oriented classification with 4 initial clas
 ```
 r.kappa classification=Class_L8_4clusters_recl reference=VCEd
 r.kappa classification=classification_rf reference=VCEd
-
 ```
 The results of both tests are shown in the following figure
 #insertar figura con resultados
