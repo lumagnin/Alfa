@@ -84,11 +84,9 @@ i.topo.corr -i base=dem zenith=$Z azimuth=$A output=L8.ilu
 i.topo.corr base=L8.ilu input=$Lista output=t_ zenith=$Z method=percent #correct topography
 ```
 -->it generate a number of useful maps named: t_LC08_L1TP_229082_20200215_20200225_01_T1_c_B[N], where [N] is 1|2|3|4|5|6|7|9.
-A comparison betwing RGB composition of the image in digital numbers and surface reflectance topo-corrected can be seen here:
 
-|Original|Corrected|
-|-------------------|------------------|
-[[see it](https://github.com/dcstlln/Alfa/blob/RGrass/NDs)|[see it](https://github.com/dcstlln/Alfa/blob/RGrass/RGBCalTPG.jpg)|
+A comparison betwing RGB composition of the original bands in digital numbers and surface reflectance topo-corrected can be seen here:
+[see it](https://github.com/dcstlln/Alfa/blob/RGrass/CompNDsRad.jpg)
 
 
 ### 7. Generation of features and additional characteristics derived from Landsat spectral information.
