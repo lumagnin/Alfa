@@ -1,7 +1,14 @@
 ## Exploratory analysis of classification strategies for the realization of a land use and land cover map oriented to the determination of  built-up/constructed/developed area. 
 
 ### Authors: 
-Celina Vionnet, Daniel Castellano,  Lucía Magnin, Mónica Pascual.
+Celina Vionnet (1), Daniel Castellano (1)(2),  Lucía Magnin (3), Mónica Pascual(4).
+
+(1):Universidad Nacional de Córdoba. (2):CEPROCOR, Córdoba. (3):CONICET, (4):
+
+[^3]:
+
+[^4]:
+
 ### Key words: 
 building/construction; Landsat; GRASS GIS; pixel based classification; OBIA.
 
@@ -19,7 +26,7 @@ The data used for this analysis were:
 |Digital elevation model (DEM-raster data) of the area |DemCcaFillSink.tif| [see it](https://github.com/dcstlln/Alfa/blob/RGrass/DemCCa.jpg)|
 |Landsat image from 02_15_2020 |LC08_L1TP_229082_20200215_20200225_01_T1.tar.gz | [see it](https://github.com/dcstlln/Alfa/blob/RGrass/L8.jpg)|
 |Ground truth (Raster data) containing classified area |VerdCampoEdificados2020.tif|[see it](https://github.com/dcstlln/Alfa/blob/RGrass/VerdDeCampo.jpg)|
-|Ground truth (Points shape type data) containing 150 training points randomly sampled and exported as a vector |VCEdPoli.shp|[see it]() |
+|Ground truth (Points shape type data) containing 150 training points randomly sampled and exported as a vector |VCEdPoli.shp|[see it](https://github.com/dcstlln/Alfa/blob/RGrass/VCEdPoli.jpg) |
 
 ### 2. Configuring working directories and starting Grass
 ```
@@ -63,6 +70,7 @@ r.reclass input=LC08_L1TP_229082_20200215_20200225_01_T1_BQA output=MascaraNubes
 r.mapcalc "Máscara = MascaraNubes * cuenca" 
 r.null map = Mascara setnull=0,0.0 
 ```
+->The output maps for this code block is: [initial mask](), [final mask]()
 
 ### 6. Conditioning the landsat image
 Moving from digital numbers to surface reflectance and brightness temperature
