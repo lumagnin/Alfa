@@ -122,7 +122,10 @@ r.mapcalc "L8_SAVIc=if(L8_SAVI<-1,null(),L8_SAVIc)" --overwrite
 -->it generate useful two maps: [_L8\_NDBIc_](https://github.com/dcstlln/Alfa/blob/RGrass/NDBI.jpg), [_L8\_SAVIc_](https://github.com/dcstlln/Alfa/blob/RGrass/SAVI.jpg)
 
 ### 8. Classification and visualization of results
-#### Conducting an unsupervised pixel-based classification using 4 initial classes (possibly representing: BareSoil, SparseVegetation, DenseVegetation, Built-up).
+#### Conducting an unsupervised pixel-based classification using 11 initial classes. 
+
+The number of initial thematic classes were arbitrarily selected to broadly include the four classes distinguishable to the naked eye: bare soil, sparsely vegetated soil, dense vegetated soil, built-up areas. The classification obtained is reclassified to give two classes with value 0 and 1 corresponding to built, not built.
+
 Grouping the working data.
 ```
 ListaClasif=`g.list rast pattern='L8_ctf*,*SAVIc*,*NDBIc*' sep=comma`
@@ -136,11 +139,11 @@ r.reclass input=Class_L8_4clusters output=Class_L8_4clusters_recl rules=$HOME/gr
 r.category Class_L8_4clusters_recl
 r.colors map=Class_L8_4clusters_recl rules=$HOME/grassgis/PaletaUrbanaRASTER
 ```
-_You can Get file/classification information typing:_ *r.info map=Class\_L8\_4clusters* and *r.category Class_L8_4clusters_recl*
+_You can Get file/classification information typing:_ *r.info map=Class\_L8\_11clusters* and *r.category Class_L8_11clusters_recl*
 
 The color rules applied can be seen here: [PaletaUrbanaRASTER](https://github.com/dcstlln/Alfa/blob/RGrass/PaletaUrbanaRASTER)
 
---> The output classification is [_L8\_4clusters_](https://github.com/dcstlln/Alfa/blob/RGrass/L8_4clusters.jpg) and it was reclassified to [_L8\_4clusters\_recl_](https://github.com/dcstlln/Alfa/blob/RGrass/L8_4clusters_recl.jpg)
+--> The output classification is [_L8\_11clusters_](https://github.com/dcstlln/Alfa/blob/RGrass/L8_11clusters.jpg) and it was reclassified to [_L8\_11clusters\_recl_](https://github.com/dcstlln/Alfa/blob/RGrass/L8_11clusters_recl.jpg)
 
 #### Perform unsupervised object-based classification (using 2 classes)
 Generating region for algorithms and seeds for speed up classification process. Determining optimal classification parameters with USPO.
@@ -197,7 +200,7 @@ v.class.mlR -nf \
 
 
 ### 9. VALIDATION / ASSESSMENT OF RESULTS
-kappa and overall accuracy for pixel-oriented classification with 4 initial classes reclassified to 2, and OBIA validation (Machine Learning).
+kappa and overall accuracy for pixel-oriented classification with 11 initial classes reclassified to 2, and OBIA validation (Machine Learning).
 
 ```
 r.kappa classification=Class_L8_4clusters_recl reference=VCEd
