@@ -119,7 +119,7 @@ r.mapcalc "L8_NDBIc=if(L8_NDBI<-1,null(),L8_NDBIc)" --overwrite
 r.mapcalc "L8_SAVIc=if(L8_SAVI>1,null(),L8_SAVI)" --overwrite
 r.mapcalc "L8_SAVIc=if(L8_SAVI<-1,null(),L8_SAVIc)" --overwrite
 ```
--->it generate useful two maps: [_L8\_NDVIc_](https://github.com/dcstlln/Alfa/blob/RGrass/NDVI.jpg), [_L8\_SAVIc_](https://github.com/dcstlln/Alfa/blob/RGrass/NDBI.jpg)
+-->it generate useful two maps: [_L8\_NDBIc_](https://github.com/dcstlln/Alfa/blob/RGrass/NDBI.jpg), [_L8\_SAVIc_](https://github.com/dcstlln/Alfa/blob/RGrass/SAVI.jpg)
 
 ### 8. Classification and visualization of results
 #### Conducting an unsupervised pixel-based classification using 4 initial classes (possibly representing: BareSoil, SparseVegetation, DenseVegetation, Built-up).
@@ -137,7 +137,10 @@ r.category Class_L8_4clusters_recl
 r.colors map=Class_L8_4clusters_recl rules=$HOME/grassgis/PaletaUrbanaRASTER
 ```
 _You can Get file/classification information typing:_ *r.info map=Class\_L8\_4clusters* and *r.category Class_L8_4clusters_recl*
+
 The color rules applied can be seen here: [PaletaUrbanaRASTER](https://github.com/dcstlln/Alfa/blob/RGrass/PaletaUrbanaRASTER)
+
+--> The output classification is [_L8\_4clusters_](https://github.com/dcstlln/Alfa/blob/RGrass/L8_4clusters.jpg) and it was reclassified to [_L8\_4clusters\_recl_](https://github.com/dcstlln/Alfa/blob/RGrass/L8_4clusters_recl.jpg)
 
 #### Perform unsupervised object-based classification (using 2 classes)
 Generating region for algorithms and seeds for speed up classification process. Determining optimal classification parameters with USPO.
