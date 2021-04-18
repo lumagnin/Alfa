@@ -67,10 +67,10 @@ Masking: remove clouds, invalid pixels and restricting output to the watershed b
 ```
 i.landsat.qa collection=1 cloud_shadow_confidence="Medium,High" cloud_confidence="Medium,High" output=ReglasNubosas.txt
 r.reclass input=LC08_L1TP_229082_20200215_20200225_01_T1_BQA output=MascaraNubes rules=ReglasNubosas.txt
-r.mapcalc "Máscara = MascaraNubes * cuenca" 
+r.mapcalc "Mascara = MascaraNubes * cuenca" 
 r.null map = Mascara setnull=0,0.0 
 ```
-->The output maps for this code block is: [initial mask](https://github.com/dcstlln/Alfa/blob/RGrass/mask.jpg), [final mask](https://github.com/dcstlln/Alfa/blob/RGrass/masknubes.jpg)
+->The output maps for this code block is: [initial mask=_MascaraNubes_](https://github.com/dcstlln/Alfa/blob/RGrass/masknubes.jpg), [final mask=_Mascara_](https://github.com/dcstlln/Alfa/blob/RGrass/mask.jpg)
 
 ### 6. Conditioning the landsat image
 Moving from digital numbers to surface reflectance and brightness temperature
