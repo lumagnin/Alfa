@@ -145,7 +145,7 @@ The reclassification rules can be seen here: [Rules](https://github.com/dcstlln/
 
 The color rules applied can be seen here: [PaletaUrbanaRASTER](https://github.com/dcstlln/Alfa/blob/RGrass/PaletaUrbanaRASTER)
 
---> The output classification is [_L8\_11clusters_](https://github.com/dcstlln/Alfa/blob/RGrass/L8_11clusters.jpg) and it was reclassified to [_L8\_11clusters\_recl_](https://github.com/dcstlln/Alfa/blob/RGrass/L8_11clusters_recl.jpg)
+--> The output classification is [_L8\_11clusters_](https://github.com/dcstlln/Alfa/blob/RGrass/class11clu.jpg) and it was reclassified to [_L8\_11clusters\_recl_](https://github.com/dcstlln/Alfa/blob/RGrass/class11clurecla.jpg)
 
 #### Perform unsupervised object-based classification (using 2 classes)
 Generating region for algorithms and seeds for speed up classification process. Determining optimal classification parameters with USPO.
@@ -165,7 +165,7 @@ Data structure containing classification params:
 |...|...|...|...|
 |regionOBIA |0.025 |3 |1.0872001515196168|
 
-each line its an ranked parameter and can be used calling the maps "segs_regionOBIA_rank1" [see it](https://github.com/dcstlln/Alfa/blob/RGrass/PaletaUrbanaRASTER),"segs_regionOBIA_rank2",..
+Each line its an ranked parameter and can be used calling the maps "segs_regionOBIA_rank1" [see it](https://github.com/dcstlln/Alfa/blob/RGrass/PaletaUrbanaRASTER),"segs_regionOBIA_rank2",..
 
 Converting rank1 to vector for visualization and making stistics for segments
 ```
@@ -199,7 +199,7 @@ v.class.mlR -nf \
   output_model_file=model \
   variable_importance_file=var_imp.txt \
 ```
--->this produce a classification map called: ["classification_rf"]()
+-->this produce a classification map called: ["classification_rf"](https://github.com/dcstlln/Alfa/blob/RGrass/clasification_rf.jpg)
 
 ### 9. VALIDATION / ASSESSMENT OF RESULTS
 kappa and overall accuracy for pixel-oriented classification with 11 initial classes reclassified to 2, and OBIA validation (Machine Learning).
@@ -212,7 +212,7 @@ The results of both tests are shown in the following table
 
 |Performance pixel based  |Performance OBIA based|
 |-------------------------|----------------------------|
-||Kappa: 0.272 |Kappa: 0.308|
+|Kappa: 0.272 |Kappa: 0.308|
 |Obs Correct: 81.949|Obs Correct: 81.027|
 
 
@@ -220,7 +220,7 @@ The results of both tests are shown in the following table
 
 - The first observation is that the OBIA classification procedure involves a greater number of steps and is generally more complicated compared to the unsupervised classification.
 - Second: the results of the classification accuracy evaluation obtained through the kappa index (% hit rate penalized by random hits) and overall hit rate value (PG = observed correct) indicate that both strategies have similar performance, or at least we cannot state that either of them is clearly superior to the other under these test conditions. Although in the cases tested the pixel based classification obtained better results (supervised PG: 85% vs 81% for OBIA-ML classification), different classification conditions (ie. number of initial minor classes, number of derived bands analyzed) may alter the results in one direction or the other. 
-As a result of the accuracy evaluation, the kappa number (% hit penalized by random hits) and percentage hit value (observed correct) indicate that the unsupervised classification using 4 classes reclassified into 2 classes is more efficient (85% of the observed values correct) than the OBIA (ML) classification into 2 classes (81%).
+As a result of the accuracy evaluation, the kappa number (% hit penalized by random hits) and percentage hit value (observed correct) indicate that the unsupervised classification using 11 classes reclassified into 2 classes is more efficient (85% of the observed values correct) than the OBIA (ML) classification into 2 classes (81%).
 The lower performance of the OBIA classification may be due to the spatial resolution of Landsat images (30 m), which prevents making use of the greater advantages of OBIA (greater precision in the definition of buildings, in this case) (Blaschke 2010).
 As a conclusion/to conclude, a greater number/wider range of configurations in the classification strategies should be explored, such as using higher spatial resolution data, using spectral indexes that improve the discrimination of classes with lower spectral separability such as rock and urban areas, e. g., incorporating the indexes proposed by Waqar et al. (2012), which in this first approximation were not used, and using a greater number of initial classes in the unsupervised classification.
  
