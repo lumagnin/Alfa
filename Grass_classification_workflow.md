@@ -70,7 +70,7 @@ r.reclass input=LC08_L1TP_229082_20200215_20200225_01_T1_BQA output=MascaraNubes
 r.mapcalc "Máscara = MascaraNubes * cuenca" 
 r.null map = Mascara setnull=0,0.0 
 ```
-->The output maps for this code block is: [initial mask](), [final mask]()
+->The output maps for this code block is: [initial mask](https://github.com/dcstlln/Alfa/blob/RGrass/mask.jpg), [final mask](https://github.com/dcstlln/Alfa/blob/RGrass/masknubes.jpg)
 
 ### 6. Conditioning the landsat image
 Moving from digital numbers to surface reflectance and brightness temperature
@@ -91,6 +91,8 @@ A=67.86241430
 i.topo.corr -i base=dem zenith=$Z azimuth=$A output=L8.ilu
 i.topo.corr base=L8.ilu input=$Lista output=t_ zenith=$Z method=percent #correct topography
 ```
+This block generate an iluminatin model (shading) and uses it to correct shadows in Landsat bands. See _l8.ilu_ [here](https://github.com/dcstlln/Alfa/blob/RGrass/L8ilu.jpg)
+
 -->it generate a number of useful maps named: t_LC08_L1TP_229082_20200215_20200225_01_T1_c_B[N], where [N] is 1|2|3|4|5|6|7|9.
 
 #### Here you can see a comparison between the RGB composition of the original bands in digital numbers and the reflectance of the surface with topographic correction: [see it](https://github.com/dcstlln/Alfa/blob/RGrass/CompNDsRad.jpg)
@@ -109,7 +111,7 @@ r.mapcalc "Pancro=(L8_ctf1+L8_ctf2+L8_ctf3+L8_ctf4)/4"
 r.colors map=Pancro -e color=grey #Color table application for panchromatic band visualization.
 r.texture input=Pancro output=Texturas size=5 distance=1 method=idm,asm  
 ```
--->it generate three useful maps: _Pancro, Texturas_ASM, Texturas_IDM_
+-->it generate three useful maps: [_Pancro_](https://github.com/dcstlln/Alfa/blob/RGrass/Pancro.jpg), [_Texturas_ASM_](https://github.com/dcstlln/Alfa/blob/RGrass/TextIDM.jpg), [_Texturas_IDM_](https://github.com/dcstlln/Alfa/blob/RGrass/TextASM.jpg)
 
 Generating spectral indexes: NDBI (normalized difference built up index) and SAVI (soil adjusted vegetation index) with  r.mapcalc y i.vi.
 Reclassify odd values above 1 and below -1.
@@ -121,7 +123,7 @@ r.mapcalc "L8_NDBIc=if(L8_NDBI<-1,null(),L8_NDBIc)" --overwrite
 r.mapcalc "L8_SAVIc=if(L8_SAVI>1,null(),L8_SAVI)" --overwrite
 r.mapcalc "L8_SAVIc=if(L8_SAVI<-1,null(),L8_SAVIc)" --overwrite
 ```
--->it generate useful two maps: _L8\_NDVIc, L8\_SAVIc_
+-->it generate useful two maps: [_L8\_NDVIc_](), [_L8\_SAVIc_]()
 
 ### 8. Classification and visualization of results
 #### Conducting an unsupervised pixel-based classification using 4 initial classes (possibly representing: BareSoil, SparseVegetation, DenseVegetation, Built-up).
