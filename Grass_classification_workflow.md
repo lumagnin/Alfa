@@ -197,7 +197,7 @@ v.class.mlR -nf \
   output_model_file=model \
   variable_importance_file=var_imp.txt \
 ```
-
+-->this produce a classification map called: ["classification_rf"]()
 
 ### 9. VALIDATION / ASSESSMENT OF RESULTS
 kappa and overall accuracy for pixel-oriented classification with 11 initial classes reclassified to 2, and OBIA validation (Machine Learning).
@@ -208,10 +208,10 @@ r.kappa classification=classification_rf reference=VCEd
 ```
 The results of both tests are shown in the following table
 
-|Classes |Performance|
-|---------|------------------------------------------------|
-|0: non built-up
-|1: built up|
+|Performance pixel based  |Performance OBIA based|
+|-------------------------|----------------------------|
+||Kappa: 0.272 |Kappa: 0.308|
+|Obs Correct: 81.949|Obs Correct: 81.027|
 
 
 ### 10. Observations
