@@ -1,9 +1,9 @@
 ## Exploratory analysis of classification strategies for the realization of a land use and land cover map oriented to the determination of  built-up/constructed/developed area. 
 
 ### Authors: 
-Celina Vionnet (1), Daniel Castellano (1)(2),  Lucía Magnin (3), Mónica Pascual(4).
+Celina Vionnet (1), Daniel Castellano (2),  Lucía Magnin (3), Mónica Pascual (4).
 
-(1):Universidad Nacional de Córdoba. (2):CEPROCOR, Córdoba. (3):CONICET, (4):Secretaría de Medio Ambiente de la Pcia. de Buenos Aires.
+(1):Est. Ciencias Geológicas, UNC. (2):CEPROCOR Centro de Excelencia en Productos y Procesos Córdoba. MinCyT Cba. (3):División Arqueología, Facultad de Cs. Naturales y Museo, UNLP - CONICET. (4):Secretaría de Medio Ambiente de la Pcia. de Buenos Aires ???.
 
 ### Key words: 
 building/construction; Landsat; GRASS GIS; pixel based classification; OBIA.
