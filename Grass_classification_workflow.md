@@ -133,11 +133,11 @@ i.group group=L8o subgroup=L8o input=$ListaClasif
 ```
 Generating spectral signatures for classifier, classifying and reclassifying classes 1,2,3->0 and 4->1 (0=no eddificated, 1=eddificated), based on knowledge of the study area 
 ```
-i.cluster group=L8o subgroup=L8o sig=L8_4clusters classes=4 separation=0.6 --overwrite
-i.maxlik group=L8o subgroup=L8o sig=L8_4clusters output=Class_L8_4clusters rej=Rechazo_L8_4Clusters --overwrite
-r.reclass input=Class_L8_4clusters output=Class_L8_4clusters_recl rules=$HOME/grassgis/reclass4clases --overwrite
-r.category Class_L8_4clusters_recl
-r.colors map=Class_L8_4clusters_recl rules=$HOME/grassgis/PaletaUrbanaRASTER
+i.cluster group=L8o subgroup=L8o sig=L8_11clusters classes=11 separation=0.7 --overwrite
+i.maxlik group=L8o subgroup=L8o sig=L8_11clusters output=Class_L8_11clusters rej=Rechazo_L8_11Clusters --overwrite
+r.reclass input=Class_L8_11clusters output=Class_L8_11clusters_recl rules=$HOME/grassgis/reclass11clases --overwrite
+r.category Class_L8_11clusters_recl
+r.colors map=Class_L8_11clusters_recl rules=$HOME/grassgis/PaletaUrbanaRASTER
 ```
 _You can Get file/classification information typing:_ *r.info map=Class\_L8\_11clusters* and *r.category Class_L8_11clusters_recl*
 
@@ -206,8 +206,12 @@ kappa and overall accuracy for pixel-oriented classification with 11 initial cla
 r.kappa classification=Class_L8_4clusters_recl reference=VCEd
 r.kappa classification=classification_rf reference=VCEd
 ```
-The results of both tests are shown in the following figure
-#insertar figura con resultados
+The results of both tests are shown in the following table
+
+|Classes |Performance|
+|---------|------------------------------------------------|
+|0: non built-up
+|1: built up|
 
 
 ### 10. Observations
