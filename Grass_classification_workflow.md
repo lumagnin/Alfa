@@ -3,11 +3,7 @@
 ### Authors: 
 Celina Vionnet (1), Daniel Castellano (1)(2),  Lucía Magnin (3), Mónica Pascual(4).
 
-(1):Universidad Nacional de Córdoba. (2):CEPROCOR, Córdoba. (3):CONICET, (4):
-
-[^3]:
-
-[^4]:
+(1):Universidad Nacional de Córdoba. (2):CEPROCOR, Córdoba. (3):CONICET, (4):Secretaría ???
 
 ### Key words: 
 building/construction; Landsat; GRASS GIS; pixel based classification; OBIA.
@@ -123,7 +119,7 @@ r.mapcalc "L8_NDBIc=if(L8_NDBI<-1,null(),L8_NDBIc)" --overwrite
 r.mapcalc "L8_SAVIc=if(L8_SAVI>1,null(),L8_SAVI)" --overwrite
 r.mapcalc "L8_SAVIc=if(L8_SAVI<-1,null(),L8_SAVIc)" --overwrite
 ```
--->it generate useful two maps: [_L8\_NDVIc_](), [_L8\_SAVIc_]()
+-->it generate useful two maps: [_L8\_NDVIc_](https://github.com/dcstlln/Alfa/blob/RGrass/NDVI.jpg), [_L8\_SAVIc_](https://github.com/dcstlln/Alfa/blob/RGrass/NDBI.jpg)
 
 ### 8. Classification and visualization of results
 #### Conducting an unsupervised pixel-based classification using 4 initial classes (possibly representing: BareSoil, SparseVegetation, DenseVegetation, Built-up).
@@ -141,7 +137,7 @@ r.category Class_L8_4clusters_recl
 r.colors map=Class_L8_4clusters_recl rules=$HOME/grassgis/PaletaUrbanaRASTER
 ```
 _You can Get file/classification information typing:_ *r.info map=Class\_L8\_4clusters* and *r.category Class_L8_4clusters_recl*
-# insertar link a $HOME/grassgis/PaletaUrbanaRASTER
+The color rules applied can be seen here: [PaletaUrbanaRASTER](https://github.com/dcstlln/Alfa/blob/RGrass/PaletaUrbanaRASTER)
 
 #### Perform unsupervised object-based classification (using 2 classes)
 Generating region for algorithms and seeds for speed up classification process. Determining optimal classification parameters with USPO.
@@ -151,14 +147,17 @@ i.superpixels.slic input=L8o output=L8sp step=2 compactness=0.7 memory=2000
 i.segment.uspo group=L8o output=L8_uspo.csv seeds=L8sp segment_map=segs region=regionOBIA \
 threshold_start=0.005 threshold_stop=0.05 threshold_step=0.005 minsizes=3 number_best=5 memory=2000 processes=4 
 ```
---> The output contains the information structured like this:
+--> The output contains a set of information represented in data structures and maps.
+
+Data structure containing classification params:
+
 |Region |Thresh |Minsize |Optimization|
 |---------|------|---|----------------|
 |regionOBIA |0.015 |3 |1.1359822904731627|
 |...|...|...|...|
 |regionOBIA |0.025 |3 |1.0872001515196168|
 
-each line its an ranked parameter and can be used calling "segs_regionOBIA_rank1","segs_regionOBIA_rank2",..
+each line its an ranked parameter and can be used calling the maps "segs_regionOBIA_rank1" [see it](https://github.com/dcstlln/Alfa/blob/RGrass/PaletaUrbanaRASTER),"segs_regionOBIA_rank2",..
 
 Converting rank1 to vector for visualization and making stistics for segments
 ```
