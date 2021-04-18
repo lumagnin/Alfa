@@ -3,7 +3,7 @@
 ### Authors: 
 Celina Vionnet (1), Daniel Castellano (2),  Lucía Magnin (3), Mónica Pascual (4).
 
-(1):Est. Ciencias Geológicas, Facultad de Ciencias Exactas, Físicas y Naturales - UNC. (2):CEPROCOR Centro de Excelencia en Productos y Procesos Córdoba. MinCyT Cba. (3):División Arqueología, Facultad de Cs. Naturales y Museo, UNLP - CONICET. (4):Secretaría de Medio Ambiente de la Pcia. de Buenos Aires ???.
+(1):Est. Ciencias Geológicas, Facultad de Ciencias Exactas, Físicas y Naturales - UNC. (2):CEPROCOR Centro de Excelencia en Productos y Procesos Córdoba. MinCyT Cba. (3):División Arqueología, Facultad de Cs. Naturales y Museo, UNLP - CONICET. (4):Departamento Planes Hidrológicos dentro de la Dirección de Planificación, Autoridad del Agua de la Provincia de Buenos Aires.
 
 ### Key words: 
 building/construction; Landsat; GRASS GIS; pixel based classification; OBIA.
