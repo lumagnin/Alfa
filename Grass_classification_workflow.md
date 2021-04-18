@@ -3,7 +3,7 @@
 ### Authors: 
 Celina Vionnet (1), Daniel Castellano (1)(2),  Lucía Magnin (3), Mónica Pascual(4).
 
-(1):Universidad Nacional de Córdoba. (2):CEPROCOR, Córdoba. (3):CONICET, (4):Secretaría ???
+(1):Universidad Nacional de Córdoba. (2):CEPROCOR, Córdoba. (3):CONICET, (4):Secretaría de Medio Ambiente de la Pcia. de Buenos Aires.
 
 ### Key words: 
 building/construction; Landsat; GRASS GIS; pixel based classification; OBIA.
@@ -77,7 +77,7 @@ sensor=oli8 metfile=$HOME/grassgis/LC08_L1TP_229082_20200215_20200225_01_T1_MTL.
 -->it generate a number of useful maps named: _LC08_L1TP_229082_20200215_20200225_01_T1_c_B[N], where [N] is 1|2|3|4|5|6|7|9.
 
 Correcting topographic shading (only 30m optical, excluding cirrus)
-Obtain position solar variables from the metadata file (MTL file, zenith and azimuth values "zenith angle = 90° - elevation").
+Obtain position solar variables from the metadata file ([MTL file](https://github.com/dcstlln/Alfa/blob/RGrass/LC08_L1TP_229082_20200215_20200225_01_T1_MTL.txt), zenith and azimuth values "zenith angle = 90° - elevation").
 Z=37.68999506 #Z=90.0-52.31000494
 ```
 Lista=`g.list rast pattern='*_B*', exclude='*_B11,*_B10,*_B8,*_B9' sep=comma`
@@ -140,6 +140,8 @@ r.category Class_L8_11clusters_recl
 r.colors map=Class_L8_11clusters_recl rules=$HOME/grassgis/PaletaUrbanaRASTER
 ```
 _You can Get file/classification information typing:_ *r.info map=Class\_L8\_11clusters* and *r.category Class_L8_11clusters_recl*
+
+The reclassification rules can be seen here: [Rules](https://github.com/dcstlln/Alfa/blob/RGrass/reclass11clases)
 
 The color rules applied can be seen here: [PaletaUrbanaRASTER](https://github.com/dcstlln/Alfa/blob/RGrass/PaletaUrbanaRASTER)
 
