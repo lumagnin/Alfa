@@ -165,7 +165,7 @@ Data structure containing classification params:
 |...|...|...|...|
 |regionOBIA |0.025 |3 |1.0872001515196168|
 
-Each line its an ranked parameter and can be used calling the maps "segs_regionOBIA_rank1", "segs_regionOBIA_rank2",..
+Each line its an ranked parameter and can be used calling the maps [_segs\_regionOBIA\_rank1_](https://github.com/dcstlln/Alfa/blob/RGrass/So1.png), [_segs\_regionOBIA\_rank2_](https://github.com/dcstlln/Alfa/blob/RGrass/So2.png),..
 
 Converting rank1 to vector for visualization and making stistics for segments
 ```
