@@ -131,7 +131,7 @@ Grouping the working data.
 ListaClasif=`g.list rast pattern='L8_ctf*,*SAVIc*,*NDBIc*' sep=comma`
 i.group group=L8o subgroup=L8o input=$ListaClasif 
 ```
-Generating spectral signatures for classifier, classifying and reclassifying classes 1,2,3->0 and 4->1 (0=no eddificated, 1=eddificated), based on knowledge of the study area 
+Generating spectral signatures for classifier, classifying and reclassifying classes *3 to 11->0* and *1,2->1* (0=no eddificated, 1=eddificated), based on knowledge of the study area 
 ```
 i.cluster group=L8o subgroup=L8o sig=L8_11clusters classes=11 separation=0.7 --overwrite
 i.maxlik group=L8o subgroup=L8o sig=L8_11clusters output=Class_L8_11clusters rej=Rechazo_L8_11Clusters --overwrite
@@ -147,7 +147,7 @@ The color rules applied can be seen here: [PaletaUrbanaRASTER](https://github.co
 
 --> The output classification is [_L8\_11clusters_](https://github.com/dcstlln/Alfa/blob/RGrass/class11clu.jpg) and it was reclassified to [_L8\_11clusters\_recl_](https://github.com/dcstlln/Alfa/blob/RGrass/class11clurecla.jpg)
 
-#### Perform unsupervised object-based classification (using 2 classes)
+#### Perform supervised object-based classification (using 2 classes with training points)
 Generating region for algorithms and seeds for speed up classification process. Determining optimal classification parameters with USPO.
 ```
 g.region -p save=regionOBIA
@@ -165,7 +165,7 @@ Data structure containing classification params:
 |...|...|...|...|
 |regionOBIA |0.025 |3 |1.0872001515196168|
 
-Each line its an ranked parameter and can be used calling the maps "segs_regionOBIA_rank1" [see it](https://github.com/dcstlln/Alfa/blob/RGrass/PaletaUrbanaRASTER),"segs_regionOBIA_rank2",..
+Each line its an ranked parameter and can be used calling the maps "segs_regionOBIA_rank1", "segs_regionOBIA_rank2",..
 
 Converting rank1 to vector for visualization and making stistics for segments
 ```
@@ -181,7 +181,9 @@ v.db.addcolumn train_segments column="class"
 v.distance from=train_segments to=VCEdPoli upload=to_attr column=class to_column=Edificado
 db.select sql="SELECT class,COUNT(cat) as count_class FROM train_segments GROUP BY class"
 ```
-_The color pallette can by set for the training vector using_ *v.colors map=train_segments rules=$HOME/grassgis/PaletaUrbana column=class*
+--> The output vector training map its called _train_segments_
+
+_The color pallette can by set for the training vector using_ *v.colors map=train_segments rules=$HOME/grassgis/PaletaUrbana column=class*, for better representation on Grass map viewer
 
 Classification with machine learning (a long single line statement to call the classifier algorithm)
 ```
