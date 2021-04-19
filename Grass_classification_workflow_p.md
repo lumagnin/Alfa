@@ -176,7 +176,7 @@ threshold_start=0.005 threshold_stop=0.05 threshold_step=0.005 minsizes=3 number
 ```
 --> The output contains a set of information represented in data structures and maps.
 
-Data structure containing classification params:
+The data structure containing ranked optimized params looks like:
 
 |Region |Thresh |Minsize |Optimization|
 |---------|------|---|----------------|
@@ -184,7 +184,11 @@ Data structure containing classification params:
 |...|...|...|...|
 |regionOBIA |0.025 |3 |1.0872001515196168|
 
-Each line its an ranked parameter and can be used calling the maps [_segs\_regionOBIA\_rank1_](https://github.com/dcstlln/Alfa/blob/RGrass/So1.png), [_segs\_regionOBIA\_rank2_](https://github.com/dcstlln/Alfa/blob/RGrass/So2.png),..
+The output maps are of type raster containing grouped pixels, as in the example below:
+
+| _segs\_regionOBIA\_rank1_|_segs\_regionOBIA\_rank2_|
+|-----------------------------|----------------------------|
+|![_segs\_regionOBIA\_rank1_](https://github.com/dcstlln/Alfa/blob/RGrass/So1.png)|![_segs\_regionOBIA\_rank2_](https://github.com/dcstlln/Alfa/blob/RGrass/So2.png)|
 
 Converting rank1 to vector for visualization and making stistics for segments
 ```
