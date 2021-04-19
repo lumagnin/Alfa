@@ -114,7 +114,7 @@ r.mapcalc "Pancro=(L8_ctf1+L8_ctf2+L8_ctf3+L8_ctf4)/4"
 r.colors map=Pancro -e color=grey #Color table application for panchromatic band visualization.
 r.texture input=Pancro output=Texturas size=5 distance=1 method=idm,asm  
 ```
--->it generate three useful maps: M_
+-->it generate three useful maps:
 
 |_Pancro_| _Texturas_ASM_| _Texturas_ID|
 |--------------------------------------|--------------------------------------|--------------------------------------|
@@ -130,7 +130,11 @@ r.mapcalc "L8_NDBIc=if(L8_NDBI<-1,null(),L8_NDBIc)" --overwrite
 r.mapcalc "L8_SAVIc=if(L8_SAVI>1,null(),L8_SAVI)" --overwrite
 r.mapcalc "L8_SAVIc=if(L8_SAVI<-1,null(),L8_SAVIc)" --overwrite
 ```
--->it generate useful two maps: [_L8\_NDBIc_](https://github.com/dcstlln/Alfa/blob/RGrass/NDBI.jpg), [_L8\_SAVIc_](https://github.com/dcstlln/Alfa/blob/RGrass/SAVI.jpg)
+-->it generate useful two maps:
+
+|_L8\_NDBIc_|_L8\_SAVIc_|
+|-----------------------------|--------------------------------|
+|![_L8\_NDBIc_](https://github.com/dcstlln/Alfa/blob/RGrass/NDBI.jpg)| ![_L8\_SAVIc_](https://github.com/dcstlln/Alfa/blob/RGrass/SAVI.jpg)|
 
 ### 8. Classification and visualization of results
 #### Conducting an unsupervised pixel-based classification using 11 initial classes. 
@@ -260,6 +264,8 @@ As a conclusion, a greater number/wider range of configurations in the classific
 - https://grass.osgeo.org/grass76/manuals/v.import.html
 - https://grass.osgeo.org/grass78/manuals/addons/i.landsat.import.html
 - https://grass.osgeo.org/grass78/manuals/addons/i.landsat.qa.html
+- https://grass.osgeo.org/grass78/manuals/addons/i.segment.uspo.html
+- https://grass.osgeo.org/grass78/manuals/addons/i.superpixels.slic.html
 - https://grass.osgeo.org/grass78/manuals/addons/r.sample.category.html 
 - https://grass.osgeo.org/grass78/manuals/d.rast.html
 - https://grass.osgeo.org/grass78/manuals/g.extension.html
