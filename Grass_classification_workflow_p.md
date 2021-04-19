@@ -209,22 +209,10 @@ db.select sql="SELECT class,COUNT(cat) as count_class FROM train_segments GROUP 
 _The color pallette can by set for the training vector using_ *v.colors map=train_segments rules=$HOME/grassgis/PaletaUrbana column=class*, for better representation on Grass map viewer
 
 Classification with machine learning (a long single line statement to call the classifier algorithm)
-```
-v.class.mlR -nf \
-  segments_map=segs_stats \
-  training_map=train_segments \
-  train_class_column=class \
-  output_class_column=class_rf \
-  classified_map=classification \
-  raster_segments_map=segs_obia_subset_rank1 \
-  classifier=rf \
-  folds=5 partitions=10 tunelength=10 \
-  weighting_modes=smv \
-  weighting_metric=accuracy \
-  output_model_file=model \
-  variable_importance_file=var_imp.txt \
-```
--->this produce a classification map called: ["classification_rf"](https://github.com/dcstlln/Alfa/blob/RGrass/clasification_rf.jpg)
+
+| Clasiffication code |   Output map|
+|---------------------------------------------------------|----------------------------------------|
+|![code](https://github.com/dcstlln/Alfa/blob/RGrass/classobiacode.png)|!["classification_rf"](https://github.com/dcstlln/Alfa/blob/RGrass/clasification_rf.jpg)|
 
 ### 9. VALIDATION / ASSESSMENT OF RESULTS
 kappa and overall accuracy for pixel-oriented classification with 11 initial classes reclassified to 2, and OBIA validation (Machine Learning).
