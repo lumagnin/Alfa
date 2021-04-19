@@ -102,7 +102,9 @@ This block generate an iluminatin model (shading) and uses it to correct shadows
 ### 7. Generation of features and additional characteristics derived from Landsat spectral information.
 Fill in null values in all bands _(cycle for C syntax only works on Linux investigte sintax for Windows)_.
 ```
-for (( i=1; i<=7; i++ )); do r.fillnulls input=t_.LC08_L1TP_229082_20200215_20200225_01_T1_c_B$i output=L8_ctf$i;done
+for (( i=1; i<=7; i++ )); do \
+    r.fillnulls input=t_.LC08_L1TP_229082_20200215_20200225_01_T1_c_B$i output=L8_ctf$i;\
+    done
 ```
 -->it generate a number of useful maps named: L8_ctf[N], where [N] is 1|2|3|4|5|6|7|9
 
@@ -112,7 +114,11 @@ r.mapcalc "Pancro=(L8_ctf1+L8_ctf2+L8_ctf3+L8_ctf4)/4"
 r.colors map=Pancro -e color=grey #Color table application for panchromatic band visualization.
 r.texture input=Pancro output=Texturas size=5 distance=1 method=idm,asm  
 ```
--->it generate three useful maps: [_Pancro_](https://github.com/dcstlln/Alfa/blob/RGrass/Pancro.jpg), [_Texturas_ASM_](https://github.com/dcstlln/Alfa/blob/RGrass/TextIDM.jpg), [_Texturas_IDM_](https://github.com/dcstlln/Alfa/blob/RGrass/TextASM.jpg)
+-->it generate three useful maps: M_
+
+|_Pancro_| _Texturas_ASM_| _Texturas_ID|
+|--------------------------------------|--------------------------------------|--------------------------------------|
+|![_Pancro_](https://github.com/dcstlln/Alfa/blob/RGrass/Pancro.jpg)|![_Texturas_ASM_](https://github.com/dcstlln/Alfa/blob/RGrass/TextIDM.jpg)| ![_Texturas_IDM_](https://github.com/dcstlln/Alfa/blob/RGrass/TextASM.jpg)|
 
 Generating spectral indexes: NDBI (normalized difference built up index) and SAVI (soil adjusted vegetation index) with  r.mapcalc y i.vi.
 Reclassify odd values above 1 and below -1.
@@ -150,7 +156,11 @@ The reclassification rules can be seen here: [Rules](https://github.com/dcstlln/
 
 The color rules applied can be seen here: [PaletaUrbanaRASTER](https://github.com/dcstlln/Alfa/blob/RGrass/PaletaUrbanaRASTER)
 
---> The output classification is [_L8\_11clusters_](https://github.com/dcstlln/Alfa/blob/RGrass/class11clu.jpg) and it was reclassified to [_L8\_11clusters\_recl_](https://github.com/dcstlln/Alfa/blob/RGrass/class11clurecla.jpg)
+--> The output: 
+
+|original classification | reclassified one|
+|----------------------------------------------------|----------------------------------------------------|
+|![_L8\_11clusters_](https://github.com/dcstlln/Alfa/blob/RGrass/class11clu.jpg)|![_L8\_11clusters\_recl_](https://github.com/dcstlln/Alfa/blob/RGrass/class11clurecla.jpg)|
 
 #### Perform supervised object-based classification (using 2 classes with training points)
 Generating region for algorithms and seeds for speed up classification process. Determining optimal classification parameters with USPO.
