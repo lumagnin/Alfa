@@ -1,4 +1,4 @@
-## Exploratory analysis of classification strategies for the realization of a land use and land cover map oriented to the determination of  built-up/constructed/developed area. 
+## Exploratory analysis of classification strategies for the realization of a land use and land cover map oriented to the determination of built-up area. 
 
 ### Authors: 
 Celina Vionnet (1), Daniel Castellano (2),  Lucía Magnin (3), Mónica Pascual (4).
@@ -18,11 +18,11 @@ The data used for this analysis were:
 
 |description | filename|preview|
 |---------------------------------------------------|----------------------------|-------------------------|
-|Basin or mask corresponding to the area (0-1 raster data) |cuenca-lago.tif|  [see it](https://github.com/dcstlln/Alfa/blob/RGrass/Cuenca-Lago.jpg)|
-|Digital elevation model (DEM-raster data) of the area |DemCcaFillSink.tif| [see it](https://github.com/dcstlln/Alfa/blob/RGrass/DemCCa.jpg)|
-|Landsat image from 02_15_2020 |LC08_L1TP_229082_20200215_20200225_01_T1.tar.gz | [see it](https://github.com/dcstlln/Alfa/blob/RGrass/L8.jpg)|
-|Ground truth (Raster data) containing classified area |VerdCampoEdificados2020.tif|[see it](https://github.com/dcstlln/Alfa/blob/RGrass/VerdDeCampo.jpg)|
-|Ground truth (Points shape type data) containing 150 training points randomly sampled and exported as a vector |VCEdPoli.shp|[see it](https://github.com/dcstlln/Alfa/blob/RGrass/VCEdPoli.jpg) |
+|Basin or mask corresponding to the area (0-1 raster data) |cuenca-lago.tif|  ![see it](https://github.com/dcstlln/Alfa/blob/RGrass/Cuenca-Lago.jpg)|
+|Digital elevation model (DEM-raster data) of the area |DemCcaFillSink.tif| ![see it](https://github.com/dcstlln/Alfa/blob/RGrass/DemCCa.jpg)|
+|Landsat image from 02_15_2020 |LC08_L1TP_229082_20200215_20200225_01_T1.tar.gz | ![see it](https://github.com/dcstlln/Alfa/blob/RGrass/L8.jpg)|
+|Ground truth (Raster data) containing classified area |VerdCampoEdificados2020.tif|![see it](https://github.com/dcstlln/Alfa/blob/RGrass/VerdDeCampo.jpg)|
+|Ground truth (Points shape type data) containing 150 training points randomly sampled and exported as a vector |VCEdPoli.shp|![see it](https://github.com/dcstlln/Alfa/blob/RGrass/VCEdPoli.jpg) |
 
 ### 2. Configuring working directories and starting Grass
 ```
@@ -66,7 +66,11 @@ r.reclass input=LC08_L1TP_229082_20200215_20200225_01_T1_BQA output=MascaraNubes
 r.mapcalc "Mascara = MascaraNubes * cuenca" 
 r.null map = Mascara setnull=0,0.0 
 ```
-->The output maps for this code block is: [initial mask=_MascaraNubes_](https://github.com/dcstlln/Alfa/blob/RGrass/masknubes.jpg), [final mask=_Mascara_](https://github.com/dcstlln/Alfa/blob/RGrass/mask.jpg)
+->The output maps for this code block are: 
+
+|Initial cloud mask                                           | Final work mask                                            | 
+|-------------------------------------------------------------|------------------------------------------------------------|
+|![initial mask=_MascaraNubes_](https://github.com/dcstlln/Alfa/blob/RGrass/masknubes.jpg)| ![final mask=_Mascara_](https://github.com/dcstlln/Alfa/blob/RGrass/mask.jpg)|
 
 ### 6. Conditioning the landsat image
 Moving from digital numbers to surface reflectance and brightness temperature
@@ -91,7 +95,8 @@ This block generate an iluminatin model (shading) and uses it to correct shadows
 
 -->it generate a number of useful maps named: t_LC08_L1TP_229082_20200215_20200225_01_T1_c_B[N], where [N] is 1|2|3|4|5|6|7|9.
 
-#### Here you can see a comparison between the RGB composition of the original bands in digital numbers and the reflectance of the surface with topographic correction: [see it](https://github.com/dcstlln/Alfa/blob/RGrass/CompNDsRad.jpg)
+#### Here you can see a comparison between the RGB composition of the original bands in digital numbers and the reflectance of the surface with topographic correction: 
+![Landsat 8: comparison before and after corrections calibrations](https://github.com/dcstlln/Alfa/blob/RGrass/CompNDsRad.jpg)
 
 
 ### 7. Generation of features and additional characteristics derived from Landsat spectral information.
