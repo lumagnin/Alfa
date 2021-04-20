@@ -1,4 +1,4 @@
-## Exploratory analysis of classification strategies for the realization of a land use and land cover map oriented to the determination of  built-up area. 
+## Exploratory analysis of classification strategies for the realization of a land use and land cover map oriented to the determination of  built-up areas 
 
 ### Authors: 
 Celina Vionnet (1), Daniel Castellano (2),  Lucía Magnin (3), Mónica Pascual (4).
@@ -9,7 +9,7 @@ Celina Vionnet (1), Daniel Castellano (2),  Lucía Magnin (3), Mónica Pascual (
 buildings ; Landsat; GRASS GIS; pixel based classification; OBIA.
 
 ### Introduction 
-This article explores two strategies for the identification of pixels corresponding to built-up area in multispectral images of medium spatial resolution. Pixel-based classifiers and object-oriented satellite image analysis have been widely used and compared for the determination of urban features in medium-resolution multispectral images. As discussed in several investigations (i.e. Tadesse et al. 2012; Waqar et al. 2012), the classification of urban features presents difficulties due to the variability of the materials used, the diversity of spectral responses encountered, and the similarity of these responses to natural features such as rock outcrops and bare soil. Although there are numerous proposals on how to approach this issue / problem, the procedures cannot be extrapolated to other areas without a prior evaluation of the performance obtained. This tutorial presents a workflow created to compare, with GRASS GIS, the performance of two different classification strategies of medium resolution multispectral imagery, for the determination of built-up area within the case study (Figure 1). The classification techniques used were unsupervised pixel-based classification by classifying with four classes and subsequently reclassifying to two classes corresponding to "Built-up", "Non built-up"; and supervised object-based image analysis (OBIA) through Machine Learning.
+This article explores two strategies for the identification of pixels corresponding to built-up areas in multispectral images of medium spatial resolution. Pixel-based classifiers and object-oriented satellite image analysis have been widely used and compared for the determination of urban features in medium-resolution multispectral images. As discussed in several investigations (i.e. Tadesse et al. 2012; Waqar et al. 2012), the classification of urban features presents difficulties due to the variability of the materials used, the diversity of spectral responses encountered, and the similarity of these responses to natural features such as rock outcrops and bare soil. Although there are numerous proposals on how to approach this issue / problem, the procedures cannot be extrapolated to other areas without a prior evaluation of the performance obtained. This tutorial presents a workflow created to compare, with GRASS GIS, the performance of two different classification strategies of medium resolution multispectral imagery, for the determination of built-up areas within the case study (Figure 1). The classification techniques used were unsupervised pixel-based classification by classifying with four classes and subsequently reclassifying to two classes corresponding to "Built-up", "Non built-up"; and supervised object-based image analysis (OBIA) through Machine Learning.
 
 ![Figure 1. Steps followed to achieve the goals proposed in GRASS GIS.](https://github.com/dcstlln/Alfa/blob/RGrass/WorkFlow.jpg)
 
@@ -68,7 +68,7 @@ r.null map = Mascara setnull=0,0.0
 ```
 ->The output maps for this code block is: [initial mask=_MascaraNubes_](https://github.com/dcstlln/Alfa/blob/RGrass/masknubes.jpg), [final mask=_Mascara_](https://github.com/dcstlln/Alfa/blob/RGrass/mask.jpg)
 
-### 6. Conditioning the landsat image
+### 6. Conditioning the Landsat image
 Moving from digital numbers to surface reflectance and brightness temperature
 ```
 i.landsat.toar input=LC08_L1TP_229082_20200215_20200225_01_T1_B output=LC08_L1TP_229082_20200215_20200225_01_T1_c_B \
@@ -94,7 +94,7 @@ This block generate an iluminatin model (shading) and uses it to correct shadows
 #### Here you can see a comparison between the RGB composition of the original bands in digital numbers and the reflectance of the surface with topographic correction: [see it](https://github.com/dcstlln/Alfa/blob/RGrass/CompNDsRad.jpg)
 
 
-### 7. Generation of features and additional characteristics derived from Landsat spectral information.
+### 7. Generation of features and additional characteristics derived from Landsat spectral information
 Fill in null values in all bands _(cycle for C syntax only works on Linux investigte sintax for Windows)_.
 ```
 for (( i=1; i<=7; i++ )); do r.fillnulls input=t_.LC08_L1TP_229082_20200215_20200225_01_T1_c_B$i output=L8_ctf$i;done
@@ -122,7 +122,7 @@ r.mapcalc "L8_SAVIc=if(L8_SAVI<-1,null(),L8_SAVIc)" --overwrite
 -->it generate useful two maps: [_L8\_NDBIc_](https://github.com/dcstlln/Alfa/blob/RGrass/NDBI.jpg), [_L8\_SAVIc_](https://github.com/dcstlln/Alfa/blob/RGrass/SAVI.jpg)
 
 ### 8. Classification and visualization of results
-#### Conducting an unsupervised pixel-based classification using 11 initial classes. 
+#### Conducting an unsupervised pixel-based classification using 11 initial classes 
 
 The number of initial thematic classes were arbitrarily selected to broadly include the four classes distinguishable to the naked eye: bare soil, sparsely vegetated soil, dense vegetated soil, built-up areas. The classification obtained is reclassified to give two classes with value 0 and 1 corresponding to built, not built.
 
@@ -226,7 +226,7 @@ The performance of the OBIA classification Obia efficiency can be influenced by 
 As a conclusion, a greater number/wider range of configurations in the classification strategies should be explored, such as using higher spatial resolution data, using spectral indexes that improve the discrimination of classes with lower spectral separability such as rock and urban areas, e. g., incorporating the indexes proposed by Waqar et al. (2012), which in this first approximation were not used, and using a greater number of initial classes in the unsupervised classification.
  
 
-### 11. Bibliografy
+### 11. Bibliography
 - Blaschke 2010. Object Based Image Analysis for Remote Sensing. ISPRS Journal of Photogrammetry and Remote Sensing 65:2-16.
 - Castellano, D. 2021. Análisis del desarrollo urbano y cambios del uso de suelo en la cuenca del embalse San Roque mediante técnicas de teledetección y su relación con aspectos geológicos-geomorfológicos. Presentado ante la Facultad de Matemática, Astronomía, Física y Computación  y el Instituto de Altos Estudios Espaciales Mario Gulich  como parte de los requerimientos para la obtención del grado de Magister en aplicaciones de Información Espacial. universidad Nacional de Córdoba, Ms.
 - Chavez, Jr, P. 1988. An improved dark-object subtraction technique for atmospheric scattering correction of multispectral data, Remote Sensing of Environment, vol. 24, pp. 459–479, 04.
