@@ -222,27 +222,28 @@ Classification with machine learning (a long single line statement to call the c
 
 | Clasiffication code |   Output map|
 |---------------------------------------------------------|----------------------------------------|
-|![code](https://github.com/dcstlln/Alfa/blob/RGrass/classobiacode.png)|!["classification_rf"](https://github.com/dcstlln/Alfa/blob/RGrass/clasification_rf.jpg)|
+|![code](https://github.com/dcstlln/Alfa/blob/RGrass/classobiacode.png)| !["classification_rf"](https://github.com/dcstlln/Alfa/blob/RGrass/clasification_rf.jpg)|
 
 ### 9. VALIDATION / ASSESSMENT OF RESULTS
 kappa and overall accuracy for pixel-oriented classification with 11 initial classes reclassified to 2, and OBIA validation (Machine Learning).
+The overall accuracy is inform as overal corrected (OC) parameter by the Grass function r.kappa. 
 
 ```
-r.kappa classification=Class_L8_4clusters_recl reference=VCEd
+r.kappa classification=Class_L8_11clusters_recl reference=VCEd
 r.kappa classification=classification_rf reference=VCEd
 ```
 The results of both tests are shown in the following table
 
 |Performance pixel based  |Performance OBIA based|
 |-------------------------|----------------------------|
-|Kappa: 0.272 |Kappa: 0.308|
-|Obs Correct: 81.949|Obs Correct: 81.027|
+|Kappa: 0.200 |Kappa: 0.308|
+|Obs Correct: 90.182|Obs Correct: 81.027|
 
 
 ### 10. Observations
 
 - The first observation is that the OBIA classification procedure involves a greater number of steps and is generally more complicated compared to the unsupervised classification.
-- Second: the results of the evaluation of the accuracy of the classification obtained through the kappa index (% hit rate penalized by random hits) and the value of the general hit rate (PG = observed correct) indicate that both strategies have a similar performance, not being able to determine which of them is clearly superior to the other in the conditions of the test.
+- Second: the performance evaluation of the methods, through the OC parameter, showed that in the tested conditions, the pixel-based classification exceeded the object-based classification by 10%. But different classification conditions for the first method produce variations of OC. For example, the OC obtained using 4 initial classes (not 16) and reclassifying two subsequent ones reached only 80%.
 The performance of the OBIA classification Obia efficiency can be influenced by spatial resolution of Landsat images (30 m), which prevents making use of the greater advantages of OBIA (greater precision in the definition of buildings, in this case) (Blaschke 2010).
 As a conclusion, a greater number/wider range of configurations in the classification strategies should be explored, such as using higher spatial resolution data, using spectral indexes that improve the discrimination of classes with lower spectral separability such as rock and urban areas, e. g., incorporating the indexes proposed by Waqar et al. (2012), which in this first approximation were not used, and using a greater number of initial classes in the unsupervised classification.
  
