@@ -55,7 +55,7 @@ g.extension d.colors
 ### 4. Loading data
 ```
 r.import input=$HOME/grassgis/Cuenca-Lago.tif output=cuenca
-i.landsat.import -p input=$HOME/grassgis extent=region
+i.landsat.import -r input=$HOME/grassgis extent=region
 r.import input=$HOME/grassgis/DemCcaIGNFillSink.tif output=dem
 r.import input=$HOME/grassgis/VerdCampoEdificados2020.tif output=VCEd
 v.import input=$HOME/grassgis/VCEdPoli.shp output=VCEdPoli
@@ -64,7 +64,6 @@ v.import input=$HOME/grassgis/VCEdPoli.shp output=VCEdPoli
 ### 5. Initial preprocessing 
 Set working area and projection to the watershed.
 ```
-g.proj -c georef=$HOME/grassgis/
 g.region raster=cuenca
 ```
 Masking: remove clouds, invalid pixels and restricting output to the watershed by combining the three elements in a mask.
@@ -74,7 +73,7 @@ _Important: you must unzip the band "LC08_L1TP_229082_20200215_20200225_01_T1_BQ
 i.landsat.qa collection=1 cloud_shadow_confidence="Medium,High" cloud_confidence="Medium,High" output=ReglasNubosas.txt
 r.reclass input=LC08_L1TP_229082_20200215_20200225_01_T1_BQA output=MascaraNubes rules=ReglasNubosas.txt
 r.mapcalc "Mascara = MascaraNubes * cuenca" 
-r.null map = Mascara setnull=0,0.0 
+r.null map=Mascara setnull=0,0.0 
 ```
 ->The output maps for this code block are: 
 
