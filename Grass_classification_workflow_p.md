@@ -31,9 +31,9 @@ To use the code in this article, two working directories must be created:
   - grassgis: contains all maps, reclassification files and color palettes
   - grassdata: Grass working directory
 
-_Important: you must unzip the band "LC08_L1TP_229082_20200215_20200225_01_T1_BQA" in the grassgis directory_. This band will be used for the initial setting of grass
+_Important: you must unzip the band "LC08_L1TP_229082_20200215_20200225_01_T1_BQA" in the grassgis directory_.
 
-The syntax used is typical of Linux. To use it on Windows and Mac it may be necessary to adjust the code
+The syntax used is typical of Linux. To use it on Windows and Mac it may be necessary to adjust the code.
 
 ```
 grass78 -c $HOME/grassgis/Cuenca-Lago.tif $HOME/grassdata/CG
@@ -68,7 +68,6 @@ g.region raster=cuenca
 ```
 Masking: remove clouds, invalid pixels and restricting output to the watershed by combining the three elements in a mask.
 
-_Important: you must unzip the band "LC08_L1TP_229082_20200215_20200225_01_T1_BQA" in the grassgis directory_
 ```
 i.landsat.qa collection=1 cloud_shadow_confidence="Medium,High" cloud_confidence="Medium,High" output=ReglasNubosas.txt
 r.reclass input=LC08_L1TP_229082_20200215_20200225_01_T1_BQA output=MascaraNubes rules=ReglasNubosas.txt
@@ -113,7 +112,7 @@ This block generate an iluminatin model (shading) and uses it to correct shadows
 Fill in null values in all bands _(cycle for C syntax only works on Linux investigte sintax for Windows)_.
 ```
 for (( i=1; i<=7; i++ )); do \
-    r.fillnulls input=t_.LC08_L1TP_229082_20200215_20200225_01_T1_c_B$i output=L8_ctf$i;\
+    r.fillnulls input=t_.LC08_L1TP_229082_20200215_20200225_01_T1_c_B$i output=L8_ctf$i; \
     done
 ```
 -->it generate a number of useful maps named: L8_ctf[N], where [N] is 1|2|3|4|5|6|7|9
