@@ -18,7 +18,7 @@ The data used for this analysis were:
 
 |description | filename|preview|
 |---------------------------------------------------|----------------------------|-------------------------|
-|Basin or mask corresponding to the area (0-1 raster data) |cuenca-lago.tif|  ![see it](https://github.com/dcstlln/Alfa/blob/RGrass/Cuenca-Lago.jpg)|
+|Basin or mask corresponding to the area (0-1 raster data) |Cuenca-Lago.tif|  ![see it](https://github.com/dcstlln/Alfa/blob/RGrass/Cuenca-Lago.jpg)|
 |Digital elevation model (DEM-raster data) of the area |DemCcaFillSink.tif| ![see it](https://github.com/dcstlln/Alfa/blob/RGrass/DemCCa.jpg)|
 |Landsat image from 02_15_2020 |LC08_L1TP_229082_20200215_20200225_01_T1.tar.gz | ![see it](https://github.com/dcstlln/Alfa/blob/RGrass/L8.jpg)|
 |Ground truth (Raster data) containing classified area |VerdCampoEdificados2020.tif|![see it](https://github.com/dcstlln/Alfa/blob/RGrass/VerdDeCampo.jpg)|
@@ -74,6 +74,7 @@ i.landsat.qa collection=1 cloud_shadow_confidence="Medium,High" cloud_confidence
 r.reclass input=LC08_L1TP_229082_20200215_20200225_01_T1_BQA output=MascaraNubes rules=ReglasNubosas.txt
 r.mapcalc "Mascara = MascaraNubes * cuenca" 
 r.null map=Mascara setnull=0,0.0 
+r.mask Mascara
 ```
 ->The output maps for this code block are: 
 
