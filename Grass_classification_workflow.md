@@ -31,7 +31,7 @@ To use the code in this article, two working directories must be created:
   - grassgis: contains all maps, reclassification files and color palettes
   - grassdata: Grass working directory
 
-The syntax used is typical of lunix. To use it on Windows and Mac it may be necessary to adjust the code
+The syntax used is typical of Linux. To use it on Windows and Mac it may be necessary to adjust the code
 
 ```
 grass78 -c CuencaLago.tif $HOME/grassdata/mylocation
