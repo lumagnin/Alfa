@@ -176,11 +176,16 @@ The color rules applied can be seen here: [PaletaUrbanaRASTER](https://github.co
 |![_L8\_11clusters_](https://github.com/dcstlln/Alfa/blob/RGrass/class11clu.jpg)|![_L8\_11clusters\_recl_](https://github.com/dcstlln/Alfa/blob/RGrass/class11clurecla.jpg)|
 
 #### Perform supervised object-based classification (using 2 classes with training points)
+Grouping the working data.
+```
+ListaClasif2=`g.list rast pattern='L8_ctf*,*SAVIc*,*NDBIc*,idl,asm' sep=comma`
+i.group group=L8o2 subgroup=L8o2 input=$ListaClasif2 
+```
 Generating region for algorithms and seeds for speed up classification process. Determining optimal classification parameters with USPO.
 ```
 g.region -p save=regionOBIA
-i.superpixels.slic input=L8o output=L8sp step=2 compactness=0.7 memory=2000
-i.segment.uspo group=L8o output=L8_uspo.csv seeds=L8sp segment_map=segs region=regionOBIA \
+i.superpixels.slic input=L8o2 output=L8sp step=2 compactness=0.7 memory=2000
+i.segment.uspo group=L8o2 output=L8_uspo.csv seeds=L8sp segment_map=segs region=regionOBIA \
 threshold_start=0.005 threshold_stop=0.05 threshold_step=0.005 minsizes=3 number_best=5 memory=2000 processes=4 
 ```
 --> The output contains a set of information represented in data structures and maps.
