@@ -31,12 +31,12 @@ To use the code in this article, two working directories must be created:
   - grassgis: contains all maps, reclassification files and color palettes
   - grassdata: Grass working directory
 
+_Important: you must unzip the band "LC08_L1TP_229082_20200215_20200225_01_T1_BQA" in the grassgis directory_. This band will be used for the initial setting of grass
+
 The syntax used is typical of Linux. To use it on Windows and Mac it may be necessary to adjust the code
 
 ```
-grass78 -c CuencaLago.tif $HOME/grassdata/mylocation
-g.mapset -c mapset=CcaSanRoque
-grass78 $HOME/grassdata/CCaSanRoque/PERMANENT 
+grass78 -c $HOME/grassgis/Cuenca-Lago.tif $HOME/grassdata/CG
 ```
 
 ### 3. Loading libraries
@@ -54,11 +54,11 @@ g.extension d.colors
 
 ### 4. Loading data
 ```
-r.import input=$HOME/grassgis/cuenca-lago.tif output=cuenca
+r.import input=$HOME/grassgis/Cuenca-Lago.tif output=cuenca
+i.landsat.import -p input=$HOME/grassgis extent=region
 r.import input=$HOME/grassgis/DemCcaIGNFillSink.tif output=dem
 r.import input=$HOME/grassgis/VerdCampoEdificados2020.tif output=VCEd
 v.import input=$HOME/grassgis/VCEdPoli.shp output=VCEdPoli
-i.landsat.import -p input=$HOME/grassgis/landsat_data pattern=’B(1|2|3|4|5|6|7|9)’
 ```
 
 ### 5. Initial preprocessing 
@@ -68,6 +68,8 @@ g.proj -c georef=$HOME/grassgis/
 g.region raster=cuenca
 ```
 Masking: remove clouds, invalid pixels and restricting output to the watershed by combining the three elements in a mask.
+
+_Important: you must unzip the band "LC08_L1TP_229082_20200215_20200225_01_T1_BQA" in the grassgis directory_
 ```
 i.landsat.qa collection=1 cloud_shadow_confidence="Medium,High" cloud_confidence="Medium,High" output=ReglasNubosas.txt
 r.reclass input=LC08_L1TP_229082_20200215_20200225_01_T1_BQA output=MascaraNubes rules=ReglasNubosas.txt
