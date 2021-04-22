@@ -228,9 +228,9 @@ Classification with machine learning (a long single line statement to call the c
 |---------------------------------------------------------|----------------------------------------|
 |![code](https://github.com/dcstlln/Alfa/blob/RGrass/classobiacode.png)| !["classification_rf"](https://github.com/dcstlln/Alfa/blob/RGrass/clasification_rf.jpg)|
 
-### 9. VALIDATION / ASSESSMENT OF RESULTS
-kappa and overall accuracy for pixel-oriented classification with 11 initial classes reclassified to 2, and OBIA classification (Machine Learning).
-The overall accuracy is inform as overal corrected (OC) parameter by the Grass function r.kappa. 
+### 9. VALIDATION OF RESULTS
+Calculus of overall accuracy (OC) for pixel-oriented classification with 11 initial classes reclassified to 2, and OBIA classification (Machine Learning).
+The overall accuracy is inform as observed corrected parameter by the Grass function r.kappa. 
 
 ```
 r.kappa classification=Class_L8_11clusters_recl reference=VCEd
@@ -240,7 +240,6 @@ The results of both tests are shown in the following table
 
 |Performance pixel based  |Performance OBIA based|
 |-------------------------|----------------------------|
-|Kappa: 0.200 |Kappa: 0.308|
 |Obs Correct: 90.182|Obs Correct: 81.027|
 
 
