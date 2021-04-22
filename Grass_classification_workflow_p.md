@@ -69,7 +69,7 @@ g.region raster=cuenca
 Masking: remove clouds, invalid pixels and restricting output to the watershed by combining the three elements in a mask.
 
 ```
-i.landsat.qa collection=1 cloud_shadow_confidence="Medium,High" cloud_confidence="Medium,High" output=ReglasNubosas.txt
+i.landsat.qa cloud_shadow_confidence="Medium,High" cloud_confidence="Medium,High" output=ReglasNubosas.txt
 r.reclass input=LC08_L1TP_229082_20200215_20200225_01_T1_BQA output=MascaraNubes rules=ReglasNubosas.txt
 r.mapcalc "Mascara = MascaraNubes * cuenca" 
 r.null map=Mascara setnull=0,0.0 
