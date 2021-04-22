@@ -162,7 +162,7 @@ Generating region for algorithms and seeds for speed up classification process. 
 g.region -p save=regionOBIA
 i.superpixels.slic input=L8o output=L8sp step=2 compactness=0.7 memory=2000
 i.segment.uspo group=L8o output=L8_uspo.csv seeds=L8sp segment_map=segs region=regionOBIA \
-threshold_start=0.005 threshold_stop=0.05 threshold_step=0.005 minsizes=3 number_best=5 memory=2000 processes=4 
+threshold_start=0.005 threshold_stop=0.05 threshold_step=0.005 minsizes=3 number_best=5 memory=2000 processes=4 --overwrite
 ```
 --> The output contains a set of information represented in data structures and maps.
 
@@ -208,7 +208,7 @@ v.class.mlR -nf \
   weighting_modes=smv \
   weighting_metric=accuracy \
   output_model_file=model \
-  variable_importance_file=var_imp.txt \
+  variable_importance_file=var_imp.txt
 ```
 -->this produce a classification map called: ["classification_rf"](https://github.com/dcstlln/Alfa/blob/RGrass/clasification_rf.jpg)
 
@@ -216,7 +216,7 @@ v.class.mlR -nf \
 kappa and overall accuracy for pixel-oriented classification with 11 initial classes reclassified to 2, and OBIA validation (Machine Learning).
 
 ```
-r.kappa classification=Class_L8_4clusters_recl reference=VCEd
+r.kappa classification=Class_L8_11clusters_recl reference=VCEd
 r.kappa classification=classification_rf reference=VCEd
 ```
 The results of both tests are shown in the following table
