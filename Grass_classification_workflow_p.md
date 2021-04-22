@@ -25,6 +25,14 @@ The data used for this analysis were:
 |Ground truth (Points shape type data) containing 150 training points randomly sampled and exported as a vector |VCEdPoli.shp|![see it](https://github.com/dcstlln/Alfa/blob/RGrass/VCEdPoli.jpg) |
 
 ### 2. Configuring working directories and starting Grass
+
+To use the code in this article, two working directories must be created:
+
+  - grassgis: contains all maps, reclassification files and color palettes
+  - grassdata: Grass working directory
+
+The syntax used is typical of lunix. To use it on Windows and Mac it may be necessary to adjust the code
+
 ```
 grass78 -c CuencaLago.tif $HOME/grassdata/mylocation
 g.mapset -c mapset=CcaSanRoque
