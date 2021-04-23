@@ -229,7 +229,7 @@ Classification with machine learning (a long single line statement to call the c
 |![code](https://github.com/dcstlln/Alfa/blob/RGrass/classobiacode.png)| !["classification_rf"](https://github.com/dcstlln/Alfa/blob/RGrass/clasification_rf.jpg)|
 
 ### 9. VALIDATION OF RESULTS
-Calculus of overall accuracy (OC) for pixel-oriented classification with 11 initial classes reclassified to 2, and OBIA classification (Machine Learning).
+Calculus of overall accuracy (OA) for pixel-oriented classification with 11 initial classes reclassified to 2, and OBIA classification (Machine Learning).
 The overall accuracy is inform as observed corrected parameter by the Grass function r.kappa. 
 
 ```
@@ -245,10 +245,12 @@ The results of both tests are shown in the following table
 
 ### 10. Observations
 
-- The first observation is that the OBIA classification procedure involves a greater number of steps and is generally more complicated compared to the unsupervised classification.
-- Second: the performance evaluation for the methods, through the OC parameter, showed that in the tested conditions, the pixel-based classification exceeded the object-based classification by 10%. But different classification conditions for the first method produce variations of OC. For example, the OC obtained using 4 initial classes (not 11) and reclassifying two subsequent ones reached only 80%.
-The performance of the OBIA classification Obia efficiency can be influenced by spatial resolution of Landsat images (30 m), which prevents making use of the greater advantages of OBIA (greater precision in the definition of buildings, in this case) (Blaschke 2010).
-As a conclusion, a greater number/wider range of configurations in the classification strategies should be explored, such as using higher spatial resolution data, using spectral indexes that improve the discrimination of classes with lower spectral separability such as rock and urban areas, e. g., incorporating the indexes proposed by Waqar et al. (2012), which in this first approximation were not used, and using a greater number of initial classes in the unsupervised classification.
+- The first observation is that the OBIA classification procedure involves a greater number of steps in the computational GRASS GIS workflow, and is generally more complicated compared to the unsupervised classification.
+- About the OA parameter values obtained, in the tested conditions the pixel-based classification exceeded the object-based segmentation by 10%. We interpret that the lower performance of the OBIA classification (81%) is influenced by spatial resolution of Landsat images (30 m), which prevents making use of the greater advantages of OBIA as has been proposed in specialized technical papers (greater precision in the definition of buildings, in this case) (Blaschke 2010).
+- A further observation derives from other exploratory unsupervised pixel-based classifications we performed on the same dataset (not presented here). In that regard, the OA obtained using 4 initial classes, reclassifyied into two, reached only 80%. The later use of 11 clases, yielded a 90.18% of OA, as was shown. 
+- So we state that the pixel-based classification method is clearly an efficient procedure for analyzing Landsat data at the San Roque Lake basin scale of analysis.
+- Nevertheless, if the study problem required a closer-up scale of analysis, with better definition of objects (i.e. individual buildings); then higher spatial resolution data should be considered, and obia will probably yield better results than pixel-based classification. 
+- Finally, we propose that a systematic exploratory strategy for registering and comparing different classification results with varying parameters is recomended to find the methodological strategy that better fits the classification goals. For instance, a greater number/wider range of configurations in the classification strategies should be explored, such as using higher spatial resolution data, using spectral indexes that improve the discrimination of classes with lower spectral separability such as rock and urban areas, e. g., incorporating the indexes proposed by Waqar et al. (2012).
  
 
 ### 11. Bibliography
